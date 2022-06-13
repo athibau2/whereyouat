@@ -1,11 +1,24 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:whereyouat/app/signin/signin_button.dart';
 import 'package:whereyouat/app/signin/social_signin_button.dart';
 import 'package:whereyouat/widgets/custom_button.dart';
 
+import '../../services/auth.dart';
+
 class SigninPage extends StatelessWidget {
-  const SigninPage({Key? key}) : super(key: key);
+  final void Function(User)? onSignIn;
+  const SigninPage({Key? key, this.onSignIn}) : super(key: key);
+
+  Future<void> signInAnonymously() async {
+    try {
+      final userCredential = await FirebaseAuth.instance.signInAnonymously();
+      onSignIn!(userCredential.user!);
+    } catch (err) {
+      print(err.toString());
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +43,7 @@ class SigninPage extends StatelessWidget {
           const Text(
             "Sign in",
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 32, fontWeight: FontWeight.w500),
+            style: TextStyle(fontSize: 32, fontWeight: FontWeight.w600),
           ),
           const SizedBox(
             height: 48,
@@ -72,7 +85,7 @@ class SigninPage extends StatelessWidget {
             color: Colors.lime[500],
             textColor: Colors.black87,
             text: "Continue as guest",
-            onPressed: () {},
+            onPressed: signInAnonymously,
           ),
         ],
       ),
