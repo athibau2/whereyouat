@@ -12,11 +12,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Time Tracker',
-      theme: ThemeData(
-        primarySwatch: Colors.indigo,
-      ),
-      home: SigninPage()
-    );
+        title: 'Where You At',
+        theme: ThemeData(
+          primarySwatch: Colors.indigo,
+        ),
+        home: SigninPage());
   }
 }
