@@ -8,13 +8,28 @@ import 'package:whereyouat/widgets/custom_button.dart';
 import '../../services/auth.dart';
 
 class SigninPage extends StatelessWidget {
-  final void Function(User)? onSignIn;
-  const SigninPage({Key? key, this.onSignIn}) : super(key: key);
+  const SigninPage({Key? key, this.auth}) : super(key: key);
+  final AuthBase? auth;
 
   Future<void> signInAnonymously() async {
     try {
-      final userCredential = await FirebaseAuth.instance.signInAnonymously();
-      onSignIn!(userCredential.user!);
+      await auth!.signInAnonymously();
+    } catch (err) {
+      print(err.toString());
+    }
+  }
+
+  Future<void> signInWithGoogle() async {
+    try {
+      await auth!.signInWithGoogle();
+    } catch (err) {
+      print(err.toString());
+    }
+  }
+
+  Future<void> signInWithFacebook() async {
+    try {
+      await auth!.signInWithFacebook();
     } catch (err) {
       print(err.toString());
     }
@@ -53,21 +68,21 @@ class SigninPage extends StatelessWidget {
             color: Colors.white,
             textColor: Colors.black87,
             text: "Sign in with Google",
-            onPressed: () {},
+            onPressed: signInWithGoogle,
           ),
           const SizedBox(
             height: 8,
           ),
-          SocialSignInButton(
-            asset: 'images/facebook-logo.png',
-            color: const Color(0xff334d92),
-            textColor: Colors.white,
-            text: "Sign in with Facebook",
-            onPressed: () {},
-          ),
-          const SizedBox(
-            height: 8,
-          ),
+          // SocialSignInButton(
+          //   asset: 'images/facebook-logo.png',
+          //   color: const Color(0xff334d92),
+          //   textColor: Colors.white,
+          //   text: "Sign in with Facebook",
+          //   onPressed: signInWithFacebook,
+          // ),
+          // const SizedBox(
+          //   height: 8,
+          // ),
           SignInButton(
             color: Colors.teal[700],
             textColor: Colors.white,

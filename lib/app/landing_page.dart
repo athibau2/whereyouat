@@ -3,34 +3,31 @@ import 'package:flutter/material.dart';
 import 'package:whereyouat/app/home_page.dart';
 import 'package:whereyouat/app/signin/signin_page.dart';
 
-class LandingPage extends StatefulWidget {
-  const LandingPage({Key? key}) : super(key: key);
+import '../services/auth.dart';
 
-  @override
-  State<LandingPage> createState() => _LandingPageState();
-}
-
-class _LandingPageState extends State<LandingPage> {
-  late User? _user;
-
-  void _updateUser(dynamic user) {
-    setState(() {
-      _user = user;
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _updateUser(FirebaseAuth.instance.currentUser);
-  }
+class LandingPage extends StatelessWidget {
+  const LandingPage({Key? key, required this.auth}) : super(key: key);
+  final AuthBase auth;
 
   @override
   Widget build(BuildContext context) {
-    return _user == null
-        ? SigninPage(
-            onSignIn: _updateUser,
-          )
-        : HomePage(onSignOut: () => _updateUser(null));
+    return StreamBuilder<User?>(
+      stream: auth.authStateChanges(),
+      // initialData parameter is an option to pass in, instead of checking the connection state
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.active) {
+          final User? user = snapshot.data;
+          return user == null
+              ? SigninPage(auth: auth)
+              : HomePage(auth: auth);
+        } else {
+          return const Scaffold(
+            body: Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
+        }
+      },
+    );
   }
 }
