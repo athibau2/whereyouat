@@ -1,54 +1,59 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
+import 'package:whereyouat/app/signin/email_signin_page.dart';
 import 'package:whereyouat/app/signin/signin_button.dart';
 import 'package:whereyouat/app/signin/social_signin_button.dart';
-import 'package:whereyouat/widgets/custom_button.dart';
-
 import '../../services/auth.dart';
 
 class SigninPage extends StatelessWidget {
-  const SigninPage({Key? key, this.auth}) : super(key: key);
-  final AuthBase? auth;
-
-  Future<void> signInAnonymously() async {
+  Future<void> signInAnonymously(BuildContext context) async {
     try {
-      await auth!.signInAnonymously();
+      final auth = Provider.of<AuthBase>(context, listen: false);
+      await auth.signInAnonymously();
     } catch (err) {
       print(err.toString());
     }
   }
 
-  Future<void> signInWithGoogle() async {
+  Future<void> signInWithGoogle(BuildContext context) async {
     try {
-      await auth!.signInWithGoogle();
+      final auth = Provider.of<AuthBase>(context, listen: false);
+      await auth.signInWithGoogle();
     } catch (err) {
       print(err.toString());
     }
   }
 
-  Future<void> signInWithFacebook() async {
+  Future<void> signInWithFacebook(BuildContext context) async {
     try {
-      await auth!.signInWithFacebook();
+      final auth = Provider.of<AuthBase>(context, listen: false);
+      await auth.signInWithFacebook();
     } catch (err) {
       print(err.toString());
     }
+  }
+
+  void signInWithEmail(BuildContext context) {
+    Navigator.of(context).push(MaterialPageRoute<void>(
+      fullscreenDialog: true,
+      builder: (context) => EmailSigninPage(),
+    ));
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Where You At"),
+        title: const Text("Where You At"),
         elevation: 6,
         centerTitle: true,
       ),
-      body: _buildContent(),
+      body: _buildContent(context),
       backgroundColor: Colors.grey.shade200,
     );
   }
 
-  Widget _buildContent() {
+  Widget _buildContent(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
@@ -68,7 +73,7 @@ class SigninPage extends StatelessWidget {
             color: Colors.white,
             textColor: Colors.black87,
             text: "Sign in with Google",
-            onPressed: signInWithGoogle,
+            onPressed: () => signInWithGoogle(context),
           ),
           const SizedBox(
             height: 8,
@@ -78,7 +83,7 @@ class SigninPage extends StatelessWidget {
             color: const Color(0xff334d92),
             textColor: Colors.white,
             text: "Sign in with Facebook",
-            onPressed: signInWithFacebook,
+            onPressed: () => signInWithFacebook(context),
           ),
           const SizedBox(
             height: 8,
@@ -87,7 +92,7 @@ class SigninPage extends StatelessWidget {
             color: Colors.teal[700],
             textColor: Colors.white,
             text: "Sign in with email",
-            onPressed: () {},
+            onPressed: () => signInWithEmail(context),
           ),
           const Padding(
             padding: EdgeInsets.symmetric(vertical: 10),
@@ -100,7 +105,7 @@ class SigninPage extends StatelessWidget {
             color: Colors.lime[500],
             textColor: Colors.black87,
             text: "Continue as guest",
-            onPressed: signInAnonymously,
+            onPressed: () => signInAnonymously(context),
           ),
         ],
       ),

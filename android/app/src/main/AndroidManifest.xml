@@ -3,14 +3,15 @@
     <queries>
         <package android:name="com.facebook.katana" />
     </queries>
-    <provider android:authorities="com.facebook.app.FacebookContentProvider757344765273225"
-        android:name="com.facebook.FacebookContentProvider"
-        android:exported="true" />
+    
     <uses-permission android:name="android.permission.INTERNET" />
    <application
         android:label="@string/app_name"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+        <provider android:authorities="com.facebook.app.FacebookContentProvider757344765273225"
+            android:name="com.facebook.FacebookContentProvider"
+            android:exported="true" />
         <activity
             android:name=".MainActivity"
             android:exported="true"
