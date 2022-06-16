@@ -6,7 +6,7 @@ class SignInButton extends CustomButton {
   SignInButton({
     required String text,
     required Color textColor,
-    required VoidCallback onPressed,
+    required VoidCallback? onPressed,
     double? borderRadius = 10,
     Color? color,
     ButtonStyle? style,

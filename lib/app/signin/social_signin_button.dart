@@ -8,7 +8,7 @@ class SocialSignInButton extends CustomButton {
     required String text,
     required Color color,
     required Color textColor,
-    required VoidCallback onPressed,
+    required VoidCallback? onPressed,
     double? borderRadius = 10,
     ButtonStyle? style,
   }) : super(
