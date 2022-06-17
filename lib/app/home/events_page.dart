@@ -33,7 +33,7 @@ class EventsPage extends StatelessWidget {
     try {
       final database = Provider.of<Database>(context, listen: false);
       await database.createEvent(Event(
-        eventName: 'Ultimate',
+        name: 'Ultimate',
         startTime: DateTime.now(),
         location: 'Timpview High School',
         // latLng: LatLng(0, 0),
@@ -78,8 +78,7 @@ class EventsPage extends StatelessWidget {
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           final events = snapshot.data;
-          final children =
-              events!.map((event) => Text(event.eventName)).toList();
+          final children = events!.map((event) => Text(event.name)).toList();
           return ListView(
             children: children,
           );
