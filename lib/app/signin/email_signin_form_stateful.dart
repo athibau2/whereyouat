@@ -5,15 +5,15 @@ import 'package:whereyouat/app/signin/validators.dart';
 import 'package:whereyouat/widgets/form_submit_button.dart';
 import '../../services/auth.dart';
 import '../../widgets/show_exception_alert_dialog.dart';
+import 'email_signin_model.dart';
 
-enum EmailSigninFormType { signIn, register }
 
-class EmailSigninForm extends StatefulWidget with EmailAndPasswordValidators {
+class EmailSigninFormStateful extends StatefulWidget with EmailAndPasswordValidators {
   @override
-  State<EmailSigninForm> createState() => _EmailSigninFormState();
+  State<EmailSigninFormStateful> createState() => _EmailSigninFormStatefulState();
 }
 
-class _EmailSigninFormState extends State<EmailSigninForm> {
+class _EmailSigninFormStatefulState extends State<EmailSigninFormStateful> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
@@ -21,11 +21,9 @@ class _EmailSigninFormState extends State<EmailSigninForm> {
 
   bool _submitted = false;
   bool _isLoading = false;
-
   String get _email => _emailController.text;
   String get _password => _passwordController.text;
   String get _confirmPassword => _confirmPasswordController.text;
-
   EmailSigninFormType _formType = EmailSigninFormType.signIn;
 
   @override
@@ -36,7 +34,7 @@ class _EmailSigninFormState extends State<EmailSigninForm> {
     super.dispose();
   }
 
-  void _submit() async {
+  Future<void> _submit() async {
     setState(() {
       _submitted = true;
       _isLoading = true;

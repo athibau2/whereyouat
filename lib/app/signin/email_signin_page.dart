@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:whereyouat/app/signin/email_signin_form_bloc_based.dart';
 
 import '../../services/auth.dart';
-import 'email_signin_form.dart';
+import 'email_signin_form_stateful.dart';
 
 class EmailSigninPage extends StatelessWidget {
 
@@ -18,7 +19,7 @@ class EmailSigninPage extends StatelessWidget {
         child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Card(
-              child: EmailSigninForm(),
+              child: EmailSigninFormBlocBased.create(context),
             )),
       ),
     );
