@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:whereyouat/app/signin/email_signin_form_bloc_based.dart';
+import 'package:whereyouat/app/signin/email_signin_form_change_notifier.dart';
 
 import '../../services/auth.dart';
 import 'email_signin_form_stateful.dart';
 
 class EmailSigninPage extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,7 +19,7 @@ class EmailSigninPage extends StatelessWidget {
         child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Card(
-              child: EmailSigninFormBlocBased.create(context),
+              child: EmailSigninFormChangeNotifier.create(context),
             )),
       ),
     );
