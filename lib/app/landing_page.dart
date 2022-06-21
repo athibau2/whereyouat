@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:whereyouat/app/home/events_page.dart';
+import 'package:whereyouat/app/home/events/events_page.dart';
 import 'package:whereyouat/app/signin/signin_page.dart';
 import 'package:whereyouat/services/database.dart';
 import '../services/auth.dart';
