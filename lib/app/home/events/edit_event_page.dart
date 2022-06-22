@@ -15,7 +15,7 @@ class EditEventPage extends StatefulWidget {
 
   static Future<void> show(BuildContext context, {Event? event}) async {
     final database = Provider.of<Database>(context, listen: false);
-    await Navigator.of(context).push(
+    await Navigator.of(context, rootNavigator: true).push(
       MaterialPageRoute(
           builder: (context) => EditEventPage(
                 database: database,
