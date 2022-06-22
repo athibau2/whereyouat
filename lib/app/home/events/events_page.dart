@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 // import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:whereyouat/app/home/events/edit_event_page.dart';
+import 'package:whereyouat/app/home/events/empty_content.dart';
 import 'package:whereyouat/app/home/events/event_list_tile.dart';
+import 'package:whereyouat/app/home/events/list_items_builder.dart';
 import 'package:whereyouat/widgets/show_alert_dialog.dart';
 import 'package:whereyouat/widgets/show_exception_alert_dialog.dart';
 import '../../../services/auth.dart';
@@ -61,27 +63,33 @@ class EventsPage extends StatelessWidget {
     return StreamBuilder<List<Event>>(
       stream: database.eventsStream(),
       builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          final events = snapshot.data;
-          final children = events!
-              .map((event) => EventListTile(
-                    event: event,
-                    onTap: () => EditEventPage.show(context, event: event),
-                  ))
-              .toList();
-          return ListView(
-            children: children,
-          );
-        }
-        if (snapshot.hasError) {
-          return const Center(
-            child: Text('Some error occured'),
-          );
-        }
-        return const Center(
-          child: CircularProgressIndicator(),
+        return ListItemsBuilder<Event>(
+          snapshot: snapshot,
+          itemBuilder: (context, event) => Dismissible(
+            key: Key('event-${event.id}'),
+            background: Container(color: Colors.red),
+            direction: DismissDirection.endToStart,
+            onDismissed: (direction) => _delete(context, event),
+            child: EventListTile(
+              event: event,
+              onTap: () => EditEventPage.show(context, event: event),
+            ),
+          ),
         );
       },
     );
+  }
+
+  Future<void> _delete(BuildContext context, Event event) async {
+    try {
+      final database = Provider.of<Database>(context, listen: false);
+      await database.deleteEvent(event);
+    } on FirebaseException catch (e) {
+      showExceptionAlertDialog(
+        context,
+        title: 'Operation failed',
+        exception: e,
+      );
+    }
   }
 }
