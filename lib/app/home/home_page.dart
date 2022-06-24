@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:provider/provider.dart';
 import 'package:whereyouat/app/home/account/account_page.dart';
 import 'package:whereyouat/app/home/cupertino_home_scaffold.dart';
+import 'package:whereyouat/app/home/google_maps/google_maps_page.dart';
+import 'package:whereyouat/app/home/google_maps/test.dart';
 import 'package:whereyouat/app/home/tab_item.dart';
+import 'package:whereyouat/bloc/application_bloc.dart';
 import 'events/events_page.dart';
 
 class HomePage extends StatefulWidget {
@@ -22,7 +27,7 @@ class _HomePageState extends State<HomePage> {
 
   Map<TabItem, WidgetBuilder> get widgetBuilders {
     return {
-      TabItem.map: (_) => Container(),
+      TabItem.map: (_) => const GoogleMapsPage(),
       TabItem.myEvents: (_) => EventsPage(),
       TabItem.account: (_) => const AccountPage(),
     };
