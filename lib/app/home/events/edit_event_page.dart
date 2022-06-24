@@ -88,6 +88,7 @@ class _EditEventPageState extends State<EditEventPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Theme.of(context).primaryColor,
         elevation: 6,
         title: Text(widget.event == null ? "New Event" : 'Edit Event'),
         centerTitle: true,

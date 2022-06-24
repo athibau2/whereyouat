@@ -47,6 +47,7 @@ class _GoogleMapsPageState extends State<GoogleMapsPage> {
 
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Theme.of(context).primaryColor,
         leading: Padding(
           padding: const EdgeInsets.all(8.0),
           child: SvgPicture.asset(

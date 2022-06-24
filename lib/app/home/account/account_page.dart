@@ -32,6 +32,7 @@ class AccountPage extends StatelessWidget {
     final auth = Provider.of<AuthBase>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Theme.of(context).primaryColor,
         elevation: 6,
         title: const Text("Account"),
         centerTitle: true,

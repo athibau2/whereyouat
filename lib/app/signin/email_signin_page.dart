@@ -10,6 +10,7 @@ class EmailSigninPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Theme.of(context).primaryColor,
         title: const Text("Sign in"),
         elevation: 6,
         centerTitle: true,

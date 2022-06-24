@@ -79,6 +79,7 @@ class SigninPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Theme.of(context).primaryColor,
         title: const Text("Where You At"),
         elevation: 6,
         centerTitle: true,
