@@ -3,9 +3,8 @@ import 'package:geolocator/geolocator.dart';
 import 'package:open_location_picker/open_location_picker.dart';
 
 class LocationAuth {
-  LocationAuth({Key? key, required this.lat, required this.lng});
-  final double lat;
-  final double lng;
+  LocationAuth({Key? key,});
+
 
   Future<Map<String, double>?> determinePosition() async {
     bool serviceEnabled;

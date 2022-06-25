@@ -1,13 +1,13 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-// import 'package:open_location_picker/open_location_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:whereyouat/app/home/events/event_list_tile.dart';
+import 'package:whereyouat/app/home/events/list_items_builder.dart';
 import 'package:whereyouat/app/home/google_maps/location_auth.dart';
-import 'package:whereyouat/bloc/application_bloc.dart';
-import 'package:whereyouat/services/location.dart';
+import 'package:whereyouat/app/home/models/event.dart';
+import 'package:whereyouat/services/database.dart';
 
 class GoogleMapsPage extends StatefulWidget {
   const GoogleMapsPage({Key? key}) : super(key: key);
@@ -17,19 +17,19 @@ class GoogleMapsPage extends StatefulWidget {
 }
 
 class _GoogleMapsPageState extends State<GoogleMapsPage> {
-  Completer<GoogleMapController> _controller = Completer();
-  late Position position;
-  final location = LocationAuth(lat: 0, lng: 0);
+  // Completer<GoogleMapController> _controller = Completer();
+  final location = LocationAuth();
 
   @override
   void initState() {
-    ApplicationBloc();
     super.initState();
   }
 
+  void _onMapCreated(GoogleMapController controller) {}
+
   @override
   Widget build(BuildContext context) {
-    final applicationBloc = Provider.of<ApplicationBloc>(context);
+    final database = Provider.of<Database>(context, listen: false);
 
     return Scaffold(
       appBar: AppBar(
@@ -67,9 +67,7 @@ class _GoogleMapsPageState extends State<GoogleMapsPage> {
                           snapshot.data!.values.last),
                       zoom: 14,
                     ),
-                    // onMapCreated: (GoogleMapController controller) {
-                    //   _controller.complete(controller);
-                    // },
+                    onMapCreated: _onMapCreated,
                   );
                 } else {
                   return Center(
@@ -83,15 +81,20 @@ class _GoogleMapsPageState extends State<GoogleMapsPage> {
             ),
           ),
           Expanded(
-            child: ListView(
-              children: [
-                Text("Hello 1"),
-                Text("Hello 2"),
-                Text("Hello 3"),
-                Text("Hello 4"),
-                Text("Hello 5"),
-              ],
-            ),
+            child: StreamBuilder<List<Event>>(
+                stream: database.eventsStream(),
+                builder: (context, snapshot) {
+                  return ListItemsBuilder<Event>(
+                    source: 'map',
+                    snapshot: snapshot,
+                    itemBuilder: (context, event) => EventListTile(
+                      event: event,
+                      onTap: () {
+                        print('REROUTE TO EVENT INFO PAGE');
+                      },
+                    ),
+                  );
+                }),
           ),
         ],
       ),

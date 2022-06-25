@@ -5,8 +5,9 @@ import 'package:whereyouat/services/firestore_service.dart';
 
 abstract class Database {
   Future<void> setEvent(Event event);
-  Stream<List<Event>> userEventsStream();
   Future<void> deleteEvent(Event event);
+  Stream<List<Event>> userEventsStream();
+  Stream<List<Event>> eventsStream();
 }
 
 Future<String> getId() async =>
@@ -18,17 +19,30 @@ class FirestoreDatabase implements Database {
   final _service = FirestoreService.instance;
 
   @override
-  Future<void> setEvent(Event event) async => _service.setData(
-        path: APIPath.userEvent(uid, event.id),
-        data: event.toMap(),
-      );
+  Future<void> setEvent(Event event) async {
+    _service.setData(
+      path: APIPath.userEvent(uid, event.id),
+      data: event.toMap(),
+    );
+    _service.setData(
+      path: APIPath.event(event.id),
+      data: event.toMap(),
+    );
+  }
 
   @override
-  Future<void> deleteEvent(Event event) =>
-      _service.deleteData(path: APIPath.userEvent(uid, event.id));
+  Future<void> deleteEvent(Event event) async {
+    _service.deleteData(path: APIPath.userEvent(uid, event.id));
+    _service.deleteData(path: APIPath.event(event.id));
+  }
 
   @override
   Stream<List<Event>> userEventsStream() => _service.collectionStream(
       path: APIPath.userEvents(uid),
+      builder: (data, documentId) => Event.fromMap(data, documentId));
+
+  @override
+  Stream<List<Event>> eventsStream() => _service.collectionStream(
+      path: APIPath.events(),
       builder: (data, documentId) => Event.fromMap(data, documentId));
 }

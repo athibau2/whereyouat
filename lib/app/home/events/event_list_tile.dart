@@ -7,8 +7,11 @@ import 'package:whereyouat/services/auth.dart';
 import '../models/event.dart';
 
 class EventListTile extends StatelessWidget {
-  const EventListTile({Key? key, required this.event, this.onTap})
-      : super(key: key);
+  const EventListTile({
+    Key? key,
+    required this.event,
+    this.onTap,
+  }) : super(key: key);
 
   final Event event;
   final VoidCallback? onTap;

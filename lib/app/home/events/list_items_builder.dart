@@ -5,10 +5,14 @@ typedef ItemWidgetBuilder<T> = Widget Function(BuildContext context, T item);
 
 class ListItemsBuilder<T> extends StatelessWidget {
   const ListItemsBuilder(
-      {Key? key, required this.snapshot, required this.itemBuilder})
+      {Key? key,
+      required this.snapshot,
+      required this.itemBuilder,
+      this.source})
       : super(key: key);
   final AsyncSnapshot<List<T>> snapshot;
   final ItemWidgetBuilder<T> itemBuilder;
+  final String? source;
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +21,13 @@ class ListItemsBuilder<T> extends StatelessWidget {
       if (items.isNotEmpty) {
         return _buildList(items);
       } else {
-        return EmptyContent();
+        if (source == 'map') {
+          return const EmptyContent(
+            title: 'No events found',
+            message: 'Try zooming the map out to see more events.',
+          );
+        }
+        return const EmptyContent();
       }
     } else if (snapshot.hasError) {
       return const EmptyContent(
