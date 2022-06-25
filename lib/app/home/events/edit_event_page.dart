@@ -7,6 +7,7 @@ import 'package:whereyouat/services/auth.dart';
 import 'package:whereyouat/widgets/show_exception_alert_dialog.dart';
 import '../../../services/database.dart';
 import '../models/event.dart';
+import 'dart:convert';
 
 class EditEventPage extends StatefulWidget {
   const EditEventPage({Key? key, required this.database, this.event})
@@ -43,7 +44,7 @@ class _EditEventPageState extends State<EditEventPage> {
     super.initState();
     if (widget.event != null) {
       _name = widget.event!.name;
-      _location = widget.event!.location;
+      _location = FormattedLocation.fromJson(widget.event!.location);
       _startTime = widget.event!.startTime;
       _endTime = widget.event!.endTime;
     } else {
@@ -71,7 +72,7 @@ class _EditEventPageState extends State<EditEventPage> {
         final event = Event(
           id: id,
           name: _name,
-          location: _location,
+          location: _location!.toJson(),
           startTime: _startTime,
           endTime: _endTime,
           owner: _auth.currentUser!.uid,
@@ -161,29 +162,16 @@ class _EditEventPageState extends State<EditEventPage> {
           hintText: "Location",
         ),
         onChanged: (FormattedLocation? newValue) {
+          dynamic temp;
           setState(() {
             _location = newValue;
+            if (newValue != null) {
+              temp = _location!.toJson();
+            }
+            _location = FormattedLocation.fromJson(temp);
           });
-          print('LOCATION: $_location');
-        },
-        onSaved: (FormattedLocation? newValue) {
-          setState(() {
-            _location = newValue;
-          });
-          print('LOCATION: $_location');
         },
       ),
-      // TextFormField(
-      //   onTap: () => _buildGoogleSearch(),
-      //   initialValue: _location,
-      //   decoration: const InputDecoration(
-      //     labelText: 'Location',
-      //   ),
-      //   keyboardType: TextInputType.streetAddress,
-      //   onSaved: (value) => _location = value!,
-      //   validator: (value) =>
-      //       value!.isNotEmpty ? null : 'Location can\'t be empty',
-      // ),
       const SizedBox(
         height: 15,
       ),

@@ -56,9 +56,6 @@ class _GoogleMapsPageState extends State<GoogleMapsPage> {
                   );
                 } else if (snapshot.connectionState == ConnectionState.done &&
                     snapshot.hasData) {
-                  List<double> latLng = [];
-
-                  print('SNAPSHOT: ${snapshot.data!.values}');
                   return GoogleMap(
                     compassEnabled: true,
                     mapToolbarEnabled: true,
@@ -70,9 +67,9 @@ class _GoogleMapsPageState extends State<GoogleMapsPage> {
                           snapshot.data!.values.last),
                       zoom: 14,
                     ),
-                    onMapCreated: (GoogleMapController controller) {
-                      _controller.complete(controller);
-                    },
+                    // onMapCreated: (GoogleMapController controller) {
+                    //   _controller.complete(controller);
+                    // },
                   );
                 } else {
                   return Center(
