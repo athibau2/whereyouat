@@ -162,13 +162,8 @@ class _EditEventPageState extends State<EditEventPage> {
           hintText: "Location",
         ),
         onChanged: (FormattedLocation? newValue) {
-          dynamic temp;
           setState(() {
             _location = newValue;
-            if (newValue != null) {
-              temp = _location!.toJson();
-            }
-            _location = FormattedLocation.fromJson(temp);
           });
         },
       ),

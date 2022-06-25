@@ -2,6 +2,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:open_location_picker/open_location_picker.dart'
+    hide Marker, LatLng;
 import 'package:provider/provider.dart';
 import 'package:whereyouat/app/home/events/event_list_tile.dart';
 import 'package:whereyouat/app/home/events/list_items_builder.dart';
@@ -17,15 +19,29 @@ class GoogleMapsPage extends StatefulWidget {
 }
 
 class _GoogleMapsPageState extends State<GoogleMapsPage> {
-  // Completer<GoogleMapController> _controller = Completer();
+  Completer<GoogleMapController> _controller = Completer();
   final location = LocationAuth();
+  Set<Marker> markers = {};
 
   @override
   void initState() {
     super.initState();
   }
 
-  void _onMapCreated(GoogleMapController controller) {}
+  void _createMarker(BuildContext context, Event event, Database database) {
+    final FormattedLocation loc = FormattedLocation.fromJson(event.location);
+    Marker marker = Marker(
+        markerId: MarkerId(event.name),
+        infoWindow: InfoWindow(
+          title: "Home",
+          snippet: "This is where I live",
+        ),
+        position: LatLng(loc.lat, loc.lon),
+        icon:
+            BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueMagenta));
+    markers.add(marker);
+    print('MARKERS: $markers');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -67,7 +83,8 @@ class _GoogleMapsPageState extends State<GoogleMapsPage> {
                           snapshot.data!.values.last),
                       zoom: 14,
                     ),
-                    onMapCreated: _onMapCreated,
+                    onMapCreated: (GoogleMapController controller) {},
+                    markers: markers,
                   );
                 } else {
                   return Center(
@@ -84,16 +101,19 @@ class _GoogleMapsPageState extends State<GoogleMapsPage> {
             child: StreamBuilder<List<Event>>(
                 stream: database.eventsStream(),
                 builder: (context, snapshot) {
+                  // _createMarker(context, snapshot, database);
                   return ListItemsBuilder<Event>(
-                    source: 'map',
-                    snapshot: snapshot,
-                    itemBuilder: (context, event) => EventListTile(
-                      event: event,
-                      onTap: () {
-                        print('REROUTE TO EVENT INFO PAGE');
-                      },
-                    ),
-                  );
+                      source: 'map',
+                      snapshot: snapshot,
+                      itemBuilder: (context, event) {
+                        _createMarker(context, event, database);
+                        return EventListTile(
+                          event: event,
+                          onTap: () {
+                            print('REROUTE TO EVENT INFO PAGE');
+                          },
+                        );
+                      });
                 }),
           ),
         ],
