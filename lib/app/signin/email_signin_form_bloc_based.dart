@@ -135,7 +135,7 @@ class _EmailSigninFormBlocBasedState extends State<EmailSigninFormBlocBased> {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<EmailSigninModel>(
+    return StreamBuilder<EmailSigninModel?>(
         stream: widget.bloc.modelStream,
         initialData: EmailSigninModel(),
         builder: (context, snapshot) {

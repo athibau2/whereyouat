@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+// import 'package:open_location_picker/open_location_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:whereyouat/app/home/google_maps/location_auth.dart';
 import 'package:whereyouat/bloc/application_bloc.dart';
 import 'package:whereyouat/services/location.dart';
 
@@ -16,30 +18,14 @@ class GoogleMapsPage extends StatefulWidget {
 
 class _GoogleMapsPageState extends State<GoogleMapsPage> {
   Completer<GoogleMapController> _controller = Completer();
-  final location = Location();
   late Position position;
-
-  void _getPosition() async {
-    position = await location.determinePosition();
-  }
+  final location = LocationAuth(lat: 0, lng: 0);
 
   @override
   void initState() {
     ApplicationBloc();
     super.initState();
-    _getPosition();
   }
-
-  static const CameraPosition _kGooglePlex = CameraPosition(
-    target: LatLng(37.42796133580664, -122.085749655962),
-    zoom: 14.4746,
-  );
-
-  static const CameraPosition _kLake = CameraPosition(
-      bearing: 192.8334901395799,
-      target: LatLng(37.43296265331129, -122.08832357078792),
-      tilt: 59.440717697143555,
-      zoom: 19.151926040649414);
 
   @override
   Widget build(BuildContext context) {
@@ -61,18 +47,41 @@ class _GoogleMapsPageState extends State<GoogleMapsPage> {
         children: [
           SizedBox(
             height: MediaQuery.of(context).size.height * 0.5,
-            child: GoogleMap(
-              compassEnabled: true,
-              mapToolbarEnabled: true,
-              myLocationButtonEnabled: true,
-              myLocationEnabled: true,
-              mapType: MapType.normal,
-              initialCameraPosition: const CameraPosition(
-                target: LatLng(40.2338, -111.6585),
-                zoom: 10,
-              ),
-              onMapCreated: (GoogleMapController controller) {
-                _controller.complete(controller);
+            child: FutureBuilder<Map<String, double>?>(
+              future: location.determinePosition(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                    child: CircularProgressIndicator(),
+                  );
+                } else if (snapshot.connectionState == ConnectionState.done &&
+                    snapshot.hasData) {
+                  List<double> latLng = [];
+
+                  print('SNAPSHOT: ${snapshot.data!.values}');
+                  return GoogleMap(
+                    compassEnabled: true,
+                    mapToolbarEnabled: true,
+                    myLocationButtonEnabled: true,
+                    myLocationEnabled: true,
+                    mapType: MapType.normal,
+                    initialCameraPosition: CameraPosition(
+                      target: LatLng(snapshot.data!.values.first,
+                          snapshot.data!.values.last),
+                      zoom: 14,
+                    ),
+                    onMapCreated: (GoogleMapController controller) {
+                      _controller.complete(controller);
+                    },
+                  );
+                } else {
+                  return Center(
+                    child: Text(
+                      snapshot.data as String,
+                      style: const TextStyle(fontSize: 20),
+                    ),
+                  );
+                }
               },
             ),
           ),

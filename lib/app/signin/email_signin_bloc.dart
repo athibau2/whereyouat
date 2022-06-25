@@ -9,10 +9,10 @@ class EmailSigninBloc {
   final AuthBase auth;
 
   final _modelSubject =
-      BehaviorSubject<EmailSigninModel>.seeded(EmailSigninModel());
+      BehaviorSubject<EmailSigninModel?>.seeded(EmailSigninModel());
   
-  Stream<EmailSigninModel> get modelStream => _modelSubject.stream;
-  EmailSigninModel get _model => _modelSubject.value;
+  Stream<EmailSigninModel?> get modelStream => _modelSubject.stream;
+  EmailSigninModel? get _model => _modelSubject.value!;
 
   void dispose() {
     _modelSubject.close();
@@ -21,11 +21,11 @@ class EmailSigninBloc {
   Future<void> submit() async {
     updateWith(submitted: true, isLoading: true);
     try {
-      if (_model.formType == EmailSigninFormType.signIn) {
-        await auth.signInWithEmailAndPassword(_model.email, _model.password);
+      if (_model!.formType == EmailSigninFormType.signIn) {
+        await auth.signInWithEmailAndPassword(_model!.email, _model!.password);
       } else {
         await auth.createUserWithEmailAndPassword(
-            _model.email, _model.password);
+            _model!.email, _model!.password);
       }
     } catch (e) {
       updateWith(isLoading: false);
@@ -34,7 +34,7 @@ class EmailSigninBloc {
   }
 
   void toggleFormType() {
-    final formType = _model.formType == EmailSigninFormType.signIn
+    final formType = _model!.formType == EmailSigninFormType.signIn
         ? EmailSigninFormType.register
         : EmailSigninFormType.signIn;
     updateWith(
@@ -61,13 +61,13 @@ class EmailSigninBloc {
     bool? submitted,
   }) {
     // update model
-    _modelSubject.value = _model.copyWith(
-      email: email,
-      password: password,
-      confirmPassword: confirmPassword,
-      formType: formType,
-      isLoading: isLoading,
-      submitted: submitted,
-    );
+    // _modelSubject.value = _model!.copyWith(
+    //   email: email,
+    //   password: password,
+    //   confirmPassword: confirmPassword,
+    //   formType: formType,
+    //   isLoading: isLoading,
+    //   submitted: submitted,
+    // );
   }
 }

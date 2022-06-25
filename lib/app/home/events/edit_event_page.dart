@@ -1,9 +1,10 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:open_location_picker/open_location_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:whereyouat/services/auth.dart';
 import 'package:whereyouat/widgets/show_exception_alert_dialog.dart';
-
 import '../../../services/database.dart';
 import '../models/event.dart';
 
@@ -30,9 +31,10 @@ class EditEventPage extends StatefulWidget {
 }
 
 class _EditEventPageState extends State<EditEventPage> {
+  final kGoogleApiKey = 'AIzaSyA30BkN_es7g6dXeQ3wZAGv4o8UWJNaXS4';
   final _formkey = GlobalKey<FormState>();
   late String _name;
-  late String _location;
+  late FormattedLocation? _location;
   late DateTime _startTime;
   late DateTime _endTime;
 
@@ -46,7 +48,7 @@ class _EditEventPageState extends State<EditEventPage> {
       _endTime = widget.event!.endTime;
     } else {
       _name = '';
-      _location = '';
+      _location = null;
       _startTime = DateTime.now();
       _endTime = DateTime.now();
     }
@@ -54,14 +56,15 @@ class _EditEventPageState extends State<EditEventPage> {
 
   bool _validateAndSaveForm() {
     final form = _formkey.currentState;
-    if (form!.validate()) {
+    if (form!.validate() && _location != null) {
       form.save();
       return true;
     }
     return false;
   }
 
-  Future<void> _submit() async {
+  Future<void> _submit(BuildContext context) async {
+    final _auth = Provider.of<AuthBase>(context, listen: false);
     if (_validateAndSaveForm()) {
       try {
         final id = widget.event?.id ?? await getId();
@@ -71,6 +74,8 @@ class _EditEventPageState extends State<EditEventPage> {
           location: _location,
           startTime: _startTime,
           endTime: _endTime,
+          owner: _auth.currentUser!.uid,
+          attendees: 1,
         );
         await widget.database.setEvent(event);
         Navigator.of(context).pop();
@@ -81,6 +86,12 @@ class _EditEventPageState extends State<EditEventPage> {
           exception: e,
         );
       }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text(
+            'Something is wrong with your form. Make sure none of the fields are empty.'),
+        duration: Duration(seconds: 3),
+      ));
     }
   }
 
@@ -98,41 +109,41 @@ class _EditEventPageState extends State<EditEventPage> {
               'Save',
               style: TextStyle(fontSize: 15, color: Colors.white),
             ),
-            onPressed: _submit,
+            onPressed: () => _submit(context),
           )
         ],
       ),
-      body: _buildContent(),
+      body: _buildContent(context),
       backgroundColor: Colors.grey[200],
     );
   }
 
-  Widget _buildContent() {
+  Widget _buildContent(BuildContext context) {
     return SingleChildScrollView(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Card(
           child: Padding(
             padding: const EdgeInsets.all(16.0),
-            child: _buildForm(),
+            child: _buildForm(context),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildForm() {
+  Widget _buildForm(BuildContext context) {
     return Form(
       key: _formkey,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
-        children: _buildFormChildren(),
+        children: _buildFormChildren(context),
       ),
     );
   }
 
-  List<Widget> _buildFormChildren() {
+  List<Widget> _buildFormChildren(BuildContext context) {
     return [
       TextFormField(
         initialValue: _name,
@@ -145,16 +156,34 @@ class _EditEventPageState extends State<EditEventPage> {
       const SizedBox(
         height: 10,
       ),
-      TextFormField(
-        initialValue: _location,
+      OpenMapPicker(
         decoration: const InputDecoration(
-          labelText: 'Location',
+          hintText: "Location",
         ),
-        keyboardType: TextInputType.streetAddress,
-        onSaved: (value) => _location = value!,
-        validator: (value) =>
-            value!.isNotEmpty ? null : 'Location can\'t be empty',
+        onChanged: (FormattedLocation? newValue) {
+          setState(() {
+            _location = newValue;
+          });
+          print('LOCATION: $_location');
+        },
+        onSaved: (FormattedLocation? newValue) {
+          setState(() {
+            _location = newValue;
+          });
+          print('LOCATION: $_location');
+        },
       ),
+      // TextFormField(
+      //   onTap: () => _buildGoogleSearch(),
+      //   initialValue: _location,
+      //   decoration: const InputDecoration(
+      //     labelText: 'Location',
+      //   ),
+      //   keyboardType: TextInputType.streetAddress,
+      //   onSaved: (value) => _location = value!,
+      //   validator: (value) =>
+      //       value!.isNotEmpty ? null : 'Location can\'t be empty',
+      // ),
       const SizedBox(
         height: 15,
       ),

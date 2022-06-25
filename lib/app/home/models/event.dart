@@ -1,7 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
-// import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:latlng/latlng.dart';
+import 'package:open_location_picker/open_location_picker.dart';
 
 class Event {
   Event({
@@ -10,15 +8,17 @@ class Event {
     required this.startTime,
     required this.endTime,
     required this.location,
-    // required this.latLng,
+    required this.owner,
+    required this.attendees,
   });
 
   final String id;
   final String name;
   final DateTime startTime;
   final DateTime endTime;
-  final String location;
-  // final LatLng latLng;
+  final FormattedLocation? location;
+  final String owner;
+  final int attendees;
 
   factory Event.fromMap(Map<String, dynamic> data, String documentId) {
     Timestamp date = data['startTime'];
@@ -26,13 +26,17 @@ class Event {
     final String name = data['name'];
     final DateTime startTime = date.toDate();
     final DateTime endTime = time.toDate();
-    final String location = data['location'];
+    final FormattedLocation? location = data['location'];
+    final String owner = data['owner'];
+    final int attendees = data['attendees'];
     return Event(
       id: documentId,
       name: name,
       startTime: startTime,
       endTime: endTime,
       location: location,
+      owner: owner,
+      attendees: attendees,
     );
   }
 
@@ -42,7 +46,8 @@ class Event {
       'startTime': startTime,
       'endTime': endTime,
       'location': location,
-      // 'latLng': latLng,
+      'owner': owner,
+      'attendees': attendees,
     };
   }
 }

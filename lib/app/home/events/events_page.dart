@@ -37,7 +37,7 @@ class EventsPage extends StatelessWidget {
   Widget _buildContent(BuildContext context) {
     final database = Provider.of<Database>(context, listen: false);
     return StreamBuilder<List<Event>>(
-      stream: database.eventsStream(),
+      stream: database.userEventsStream(),
       builder: (context, snapshot) {
         return ListItemsBuilder<Event>(
           snapshot: snapshot,
