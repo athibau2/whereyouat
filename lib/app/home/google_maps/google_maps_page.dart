@@ -28,7 +28,7 @@ class _GoogleMapsPageState extends State<GoogleMapsPage> {
     super.initState();
   }
 
-  void _createMarker(BuildContext context, Event event, Database database) {
+  Marker _createMarker(BuildContext context, Event event) {
     final FormattedLocation loc = FormattedLocation.fromJson(event.location);
     Marker marker = Marker(
         markerId: MarkerId(event.name),
@@ -39,8 +39,7 @@ class _GoogleMapsPageState extends State<GoogleMapsPage> {
         position: LatLng(loc.lat, loc.lon),
         icon:
             BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueMagenta));
-    markers.add(marker);
-    print('MARKERS: $markers');
+    return marker;
   }
 
   @override
@@ -83,7 +82,18 @@ class _GoogleMapsPageState extends State<GoogleMapsPage> {
                           snapshot.data!.values.last),
                       zoom: 14,
                     ),
-                    onMapCreated: (GoogleMapController controller) {},
+                    onMapCreated: (GoogleMapController controller) =>
+                        StreamBuilder<List<Event>>(
+                            stream: database.eventsStream(),
+                            builder: (context, snapshot) {
+                              return ListItemsBuilder<Event>(
+                                  source: 'map',
+                                  snapshot: snapshot,
+                                  itemBuilder: (context, event) {
+                                    markers.add(_createMarker(context, event));
+                                    return Container();
+                                  });
+                            }),
                     markers: markers,
                   );
                 } else {
@@ -106,7 +116,7 @@ class _GoogleMapsPageState extends State<GoogleMapsPage> {
                       source: 'map',
                       snapshot: snapshot,
                       itemBuilder: (context, event) {
-                        _createMarker(context, event, database);
+                        // _createMarker(context, event);
                         return EventListTile(
                           event: event,
                           onTap: () {
