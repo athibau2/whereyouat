@@ -7,7 +7,6 @@ import 'package:whereyouat/services/auth.dart';
 import 'package:whereyouat/widgets/show_exception_alert_dialog.dart';
 import '../../../services/database.dart';
 import '../models/event.dart';
-import 'dart:convert';
 
 class EditEventPage extends StatefulWidget {
   const EditEventPage({Key? key, required this.database, this.event})
@@ -35,7 +34,7 @@ class _EditEventPageState extends State<EditEventPage> {
   final kGoogleApiKey = 'AIzaSyA30BkN_es7g6dXeQ3wZAGv4o8UWJNaXS4';
   final _formkey = GlobalKey<FormState>();
   late String _name;
-  late FormattedLocation? _location;
+  late Map<String, dynamic> _location;
   late DateTime _startTime;
   late DateTime _endTime;
 
@@ -44,12 +43,12 @@ class _EditEventPageState extends State<EditEventPage> {
     super.initState();
     if (widget.event != null) {
       _name = widget.event!.name;
-      _location = FormattedLocation.fromJson(widget.event!.location);
+      _location = widget.event!.location;
       _startTime = widget.event!.startTime;
       _endTime = widget.event!.endTime;
     } else {
       _name = '';
-      _location = null;
+      _location = {};
       _startTime = DateTime.now();
       _endTime = DateTime.now();
     }
@@ -57,7 +56,7 @@ class _EditEventPageState extends State<EditEventPage> {
 
   bool _validateAndSaveForm() {
     final form = _formkey.currentState;
-    if (form!.validate() && _location != null) {
+    if (form!.validate() && _location != {}) {
       form.save();
       return true;
     }
@@ -72,7 +71,7 @@ class _EditEventPageState extends State<EditEventPage> {
         final event = Event(
           id: id,
           name: _name,
-          location: _location!.toJson(),
+          location: _location,
           startTime: _startTime,
           endTime: _endTime,
           owner: _auth.currentUser!.uid,
@@ -163,7 +162,17 @@ class _EditEventPageState extends State<EditEventPage> {
         ),
         onChanged: (FormattedLocation? newValue) {
           setState(() {
-            _location = newValue;
+            if (newValue != null) {
+              _location = {
+                'lat': newValue.lat,
+                'long': newValue.lon,
+                'displayName': newValue.displayName,
+                'address': newValue.address.toJson(),
+                'name': newValue.name,
+              };
+            } else {
+              _location = {};
+            }
           });
         },
       ),

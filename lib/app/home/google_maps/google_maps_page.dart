@@ -1,9 +1,6 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:open_location_picker/open_location_picker.dart'
-    hide Marker, LatLng;
 import 'package:provider/provider.dart';
 import 'package:whereyouat/app/home/events/event_list_tile.dart';
 import 'package:whereyouat/app/home/events/list_items_builder.dart';
@@ -19,27 +16,28 @@ class GoogleMapsPage extends StatefulWidget {
 }
 
 class _GoogleMapsPageState extends State<GoogleMapsPage> {
-  Completer<GoogleMapController> _controller = Completer();
   final location = LocationAuth();
   Set<Marker> markers = {};
 
   @override
   void initState() {
     super.initState();
+    setState(() {});
   }
 
-  Marker _createMarker(BuildContext context, Event event) {
-    final FormattedLocation loc = FormattedLocation.fromJson(event.location);
-    Marker marker = Marker(
-        markerId: MarkerId(event.name),
-        infoWindow: InfoWindow(
-          title: "Home",
-          snippet: "This is where I live",
-        ),
-        position: LatLng(loc.lat, loc.lon),
-        icon:
-            BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueMagenta));
-    return marker;
+  void _createMarkers(BuildContext context, List<Event> events) {
+    for (Event event in events) {
+      Marker marker = Marker(
+          markerId: MarkerId(event.id),
+          infoWindow: InfoWindow(
+            title: event.name,
+            snippet: "This is where I live",
+          ),
+          position: LatLng(event.location['lat'], event.location['long']),
+          icon: BitmapDescriptor.defaultMarkerWithHue(
+              BitmapDescriptor.hueMagenta));
+      markers.add(marker);
+    }
   }
 
   @override
@@ -82,19 +80,8 @@ class _GoogleMapsPageState extends State<GoogleMapsPage> {
                           snapshot.data!.values.last),
                       zoom: 14,
                     ),
-                    onMapCreated: (GoogleMapController controller) =>
-                        StreamBuilder<List<Event>>(
-                            stream: database.eventsStream(),
-                            builder: (context, snapshot) {
-                              return ListItemsBuilder<Event>(
-                                  source: 'map',
-                                  snapshot: snapshot,
-                                  itemBuilder: (context, event) {
-                                    markers.add(_createMarker(context, event));
-                                    return Container();
-                                  });
-                            }),
-                    markers: markers,
+                    onMapCreated: (GoogleMapController controller) {},
+                    markers: Set<Marker>.of(markers),
                   );
                 } else {
                   return Center(
@@ -111,12 +98,15 @@ class _GoogleMapsPageState extends State<GoogleMapsPage> {
             child: StreamBuilder<List<Event>>(
                 stream: database.eventsStream(),
                 builder: (context, snapshot) {
-                  // _createMarker(context, snapshot, database);
+                  database.eventsStream().listen((events) {
+                    if (snapshot.hasData) {
+                      _createMarkers(context, events);
+                    }
+                  });
                   return ListItemsBuilder<Event>(
                       source: 'map',
                       snapshot: snapshot,
                       itemBuilder: (context, event) {
-                        // _createMarker(context, event);
                         return EventListTile(
                           event: event,
                           onTap: () {

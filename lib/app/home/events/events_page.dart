@@ -43,7 +43,6 @@ class EventsPage extends StatelessWidget {
           itemBuilder: (context, event) => Dismissible(
             key: Key('event-${event.id}'),
             background: Container(color: Colors.red),
-            direction: DismissDirection.endToStart,
             onDismissed: (direction) => _delete(context, event),
             child: EventListTile(
               event: event,

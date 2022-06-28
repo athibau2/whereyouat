@@ -43,7 +43,7 @@ class ListItemsBuilder<T> extends StatelessWidget {
   Widget _buildList(List<T> items) {
     return ListView.separated(
       separatorBuilder: (context, index) => const Divider(
-        height: 0.5,
+        height: 1,
       ),
       itemCount: items.length,
       itemBuilder: (context, index) => itemBuilder(context, items[index]),
