@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:whereyouat/app/signin/email_signin_page.dart';
 import 'package:whereyouat/app/signin/signin_manager.dart';
@@ -80,6 +81,12 @@ class SigninPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).primaryColor,
+        leading: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: SvgPicture.asset(
+            'images/logo.svg',
+          ),
+        ),
         title: const Text("Where You At"),
         elevation: 6,
         centerTitle: true,

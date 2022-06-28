@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:whereyouat/services/auth.dart';
 import 'package:whereyouat/widgets/avatar.dart';
@@ -34,6 +35,12 @@ class AccountPage extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Theme.of(context).primaryColor,
         elevation: 6,
+        leading: Padding(
+          padding: const EdgeInsets.all(6.0),
+          child: SvgPicture.asset(
+            'images/logo.svg',
+          ),
+        ),
         title: const Text("Account"),
         centerTitle: true,
         actions: [
