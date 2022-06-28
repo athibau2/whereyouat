@@ -9,6 +9,7 @@ class Event {
     required this.location,
     required this.owner,
     required this.attendees,
+    required this.description,
   });
 
   final String id;
@@ -18,6 +19,7 @@ class Event {
   final Map<String, dynamic> location;
   final String owner;
   final int attendees;
+  final String description;
 
   factory Event.fromMap(Map<String, dynamic> data, String documentId) {
     Timestamp date = data['startTime'];
@@ -28,6 +30,7 @@ class Event {
     final Map<String, dynamic> location = data['location'];
     final String owner = data['owner'];
     final int attendees = data['attendees'];
+    final String description = data['description'];
     return Event(
       id: documentId,
       name: name,
@@ -36,6 +39,7 @@ class Event {
       location: location,
       owner: owner,
       attendees: attendees,
+      description: description,
     );
   }
 
@@ -47,6 +51,7 @@ class Event {
       'location': location,
       'owner': owner,
       'attendees': attendees,
+      'description': description,
     };
   }
 }

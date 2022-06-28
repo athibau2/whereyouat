@@ -34,6 +34,7 @@ class _EditEventPageState extends State<EditEventPage> {
   final kGoogleApiKey = 'AIzaSyA30BkN_es7g6dXeQ3wZAGv4o8UWJNaXS4';
   final _formkey = GlobalKey<FormState>();
   late String _name;
+  late String _description;
   late Map<String, dynamic> _location;
   late DateTime _startTime;
   late DateTime _endTime;
@@ -46,11 +47,13 @@ class _EditEventPageState extends State<EditEventPage> {
       _location = widget.event!.location;
       _startTime = widget.event!.startTime;
       _endTime = widget.event!.endTime;
+      _description = widget.event!.description;
     } else {
       _name = '';
       _location = {};
       _startTime = DateTime.now();
       _endTime = DateTime.now();
+      _description = '';
     }
   }
 
@@ -76,6 +79,7 @@ class _EditEventPageState extends State<EditEventPage> {
           endTime: _endTime,
           owner: _auth.currentUser!.uid,
           attendees: 1,
+          description: _description,
         );
         await widget.database.setEvent(event);
         Navigator.of(context).pop();
@@ -152,6 +156,20 @@ class _EditEventPageState extends State<EditEventPage> {
         ),
         onSaved: (value) => _name = value!,
         validator: (value) => value!.isNotEmpty ? null : 'Name can\'t be empty',
+      ),
+      const SizedBox(
+        height: 10,
+      ),
+      TextFormField(
+        autocorrect: true,
+        maxLines: 2,
+        initialValue: _description,
+        decoration: const InputDecoration(
+          labelText: 'Description',
+        ),
+        onSaved: (value) => _description = value!,
+        validator: (value) =>
+            value!.isNotEmpty ? null : 'Description can\'t be empty',
       ),
       const SizedBox(
         height: 10,

@@ -31,7 +31,7 @@ class _GoogleMapsPageState extends State<GoogleMapsPage> {
           markerId: MarkerId(event.id),
           infoWindow: InfoWindow(
             title: event.name,
-            snippet: "This is where I live",
+            snippet: event.description,
           ),
           position: LatLng(event.location['lat'], event.location['long']),
           icon: BitmapDescriptor.defaultMarkerWithHue(
@@ -53,6 +53,8 @@ class _GoogleMapsPageState extends State<GoogleMapsPage> {
             'images/logo.svg',
           ),
         ),
+        title: const Text('Event Map'),
+        centerTitle: true,
       ),
       body: Column(
         mainAxisSize: MainAxisSize.max,
