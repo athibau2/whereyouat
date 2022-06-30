@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:whereyouat/app/home/events/edit_event_page.dart';
 import 'package:whereyouat/app/home/events/event_details_page.dart';
 import 'package:whereyouat/app/home/events/event_list_tile.dart';
 import 'package:whereyouat/app/home/events/list_items_builder.dart';
 import 'package:whereyouat/app/home/google_maps/location_auth.dart';
 import 'package:whereyouat/app/home/models/event.dart';
+import 'package:whereyouat/services/auth.dart';
 import 'package:whereyouat/services/database.dart';
 
 class GoogleMapsPage extends StatefulWidget {
@@ -55,6 +57,7 @@ class _GoogleMapsPageState extends State<GoogleMapsPage> {
   @override
   Widget build(BuildContext context) {
     final database = Provider.of<Database>(context, listen: false);
+    final _auth = Provider.of<AuthBase>(context, listen: false);
     late GoogleMapController mapController;
 
     return Scaffold(
@@ -126,7 +129,9 @@ class _GoogleMapsPageState extends State<GoogleMapsPage> {
                       itemBuilder: (context, event) {
                         return EventListTile(
                           event: event,
-                          onTap: () => _showInfoWindow(mapController, event),
+                          onTap: () => _auth.currentUser!.uid == event.owner
+                              ? EditEventPage.show(context, event: event)
+                              : _showInfoWindow(mapController, event),
                         );
                       });
                 }),

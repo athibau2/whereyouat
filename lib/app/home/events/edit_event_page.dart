@@ -257,6 +257,8 @@ class _EditEventPageState extends State<EditEventPage> {
       timeOfDay = 'PM';
     }
     if (minute == 0) minute = '00';
+    if (minute < 10) minute = '0' + minute.toString();
+    
     String getWeekday(int weekday) {
       switch (weekday) {
         case 1:

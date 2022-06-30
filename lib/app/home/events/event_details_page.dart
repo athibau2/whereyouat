@@ -1,4 +1,4 @@
-import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
@@ -10,18 +10,25 @@ import '../models/event.dart';
 
 class EventDetailsPage extends StatefulWidget {
   const EventDetailsPage(
-      {Key? key, required this.database, required this.event})
+      {Key? key,
+      required this.database,
+      required this.event,
+      required this.auth})
       : super(key: key);
   final Database database;
   final Event event;
+  final AuthBase auth;
 
   static Future<void> show(BuildContext context, {required Event event}) async {
     final database = Provider.of<Database>(context, listen: false);
+    final _auth = Provider.of<AuthBase>(context, listen: false);
+
     await Navigator.of(context, rootNavigator: true).push(
       MaterialPageRoute(
           builder: (context) => EventDetailsPage(
                 database: database,
                 event: event,
+                auth: _auth,
               ),
           fullscreenDialog: true),
     );
@@ -33,33 +40,108 @@ class EventDetailsPage extends StatefulWidget {
 
 class _EventDetailsPageState extends State<EventDetailsPage> {
   late Event _event;
+  late DocumentSnapshot<Object?> snapshot;
+  late Map<String, dynamic>? streamEvent;
+  bool loading = false;
+  late int people;
 
   @override
   void initState() {
     super.initState();
     _event = widget.event;
+    people = widget.event.attendees.length;
+    _getStatus();
+  }
+
+  Future<void> _getStatus() async {
+    // Stream<Map<String, dynamic>> stream =
+    //     widget.database.eventStream(widget.auth.currentUser!.uid, _event.id);
+    // stream.listen((event) {
+    //   if (event.isNotEmpty) {
+    //     setState(() {
+    //       streamEvent = event;
+    //     });
+    //     print('STREAMEVENT: ${streamEvent},,,,,${event}');
+    //   }
+    // });
+
+    CollectionReference events = FirebaseFirestore.instance
+        .collection('users/${widget.auth.currentUser!.uid}/events');
+    final res = await events.doc(_event.id).get();
+    setState(() {
+      snapshot = res;
+    });
   }
 
   Future<void> _optInOrOut(BuildContext context) async {
-    final _auth = Provider.of<AuthBase>(context, listen: false);
-    try {
-      final event = Event(
-        id: _event.id,
-        name: _event.name,
-        location: _event.location,
-        startTime: _event.startTime,
-        endTime: _event.endTime,
-        owner: _event.owner,
-        attendees: [..._event.attendees],
-        description: _event.description,
-      );
-      await widget.database.setEvent(event);
-    } on FirebaseException catch (e) {
-      showExceptionAlertDialog(
-        context,
-        title: 'Operation failed',
-        exception: e,
-      );
+    setState(() {
+      loading = true;
+    });
+    // OPT IN
+    if (!snapshot.exists) {
+      setState(() {
+        people += 1;
+      });
+      try {
+        final event = Event(
+          id: _event.id,
+          name: _event.name,
+          location: _event.location,
+          startTime: _event.startTime,
+          endTime: _event.endTime,
+          owner: _event.owner,
+          attendees: [..._event.attendees, widget.auth.currentUser!.uid],
+          description: _event.description,
+        );
+        await widget.database.setEvent(event);
+        setState(() {
+          loading = false;
+        });
+        _getStatus();
+      } on FirebaseException catch (e) {
+        showExceptionAlertDialog(
+          context,
+          title: 'Operation failed',
+          exception: e,
+        );
+      }
+    }
+    // OPT OUT
+    else if (snapshot.exists) {
+      setState(() {
+        people -= 1;
+      });
+      Map<String, dynamic> event = snapshot.data() as Map<String, dynamic>;
+      List<dynamic> attendees = event['attendees'];
+      for (int i = 0; i < attendees.length; ++i) {
+        if (attendees[i] == widget.auth.currentUser!.uid) {
+          attendees.removeAt(i);
+          break;
+        }
+      }
+      try {
+        final event = Event(
+          id: _event.id,
+          name: _event.name,
+          location: _event.location,
+          startTime: _event.startTime,
+          endTime: _event.endTime,
+          owner: _event.owner,
+          attendees: [...attendees],
+          description: _event.description,
+        );
+        await widget.database.optOut(event);
+        setState(() {
+          loading = false;
+        });
+        _getStatus();
+      } on FirebaseException catch (e) {
+        showExceptionAlertDialog(
+          context,
+          title: 'Operation failed',
+          exception: e,
+        );
+      }
     }
   }
 
@@ -84,15 +166,17 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
       body: _buildContent(context),
       backgroundColor: Colors.grey[200],
       floatingActionButton: CustomButton(
-        child: const Text(
-          'Opt In!',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 22,
-          ),
-        ),
+        child: loading
+            ? const CircularProgressIndicator()
+            : Text(
+                snapshot.exists ? 'Opt Out' : 'Opt In!',
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 22,
+                ),
+              ),
         onPressed: () => _optInOrOut(context),
-        color: Theme.of(context).primaryColor,
+        color: snapshot.exists ? Colors.red : Theme.of(context).primaryColor,
         borderRadius: 30,
       ),
     );
@@ -196,7 +280,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
               padding: EdgeInsets.only(right: 8.0),
               child: Icon(Icons.people),
             ),
-            Expanded(flex: 9, child: Text(_event.attendees.length.toString())),
+            Expanded(flex: 9, child: Text(people.toString())),
           ],
         ),
         const Divider(
@@ -215,6 +299,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
       timeOfDay = 'PM';
     }
     if (minute == 0) minute = '00';
+    if (minute < 10) minute = '0' + minute.toString();
 
     String getWeekday(int weekday) {
       switch (weekday) {

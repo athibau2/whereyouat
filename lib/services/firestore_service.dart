@@ -26,4 +26,13 @@ class FirestoreService {
         .map((snapshot) => builder(snapshot.data(), snapshot.id))
         .toList());
   }
+
+  Stream<Map<String, dynamic>> documentStream<T>({
+    required String path,
+    required T Function(Map<String, dynamic> data, String documentId) builder,
+  }) {
+    final reference = FirebaseFirestore.instance.doc(path);
+    final snapshot = reference.snapshots();
+    return snapshot.map((event) => event.data()!);
+  }
 }

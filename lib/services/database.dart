@@ -6,9 +6,10 @@ import 'package:whereyouat/services/firestore_service.dart';
 abstract class Database {
   Future<void> setEvent(Event event);
   Future<void> deleteEvent(Event event);
-  Future<void> optInOrOut(Event event);
+  Future<void> optOut(Event event);
   Stream<List<Event>> userEventsStream();
   Stream<List<Event>> eventsStream();
+  Stream<Map<String, dynamic>> eventStream(String uid, String eventId);
 }
 
 Future<String> getId() async =>
@@ -38,8 +39,12 @@ class FirestoreDatabase implements Database {
   }
 
   @override
-  Future<void> optInOrOut(Event event) async {
-
+  Future<void> optOut(Event event) async {
+    _service.deleteData(path: APIPath.userEvent(uid, event.id));
+    _service.setData(
+      path: APIPath.event(event.id),
+      data: event.toMap(),
+    );
   }
 
   @override
@@ -50,5 +55,10 @@ class FirestoreDatabase implements Database {
   @override
   Stream<List<Event>> eventsStream() => _service.collectionStream(
       path: APIPath.events(),
+      builder: (data, documentId) => Event.fromMap(data, documentId));
+
+  @override
+  Stream<Map<String, dynamic>> eventStream(String uid, String eventId) => _service.documentStream(
+      path: APIPath.userEvent(uid, eventId),
       builder: (data, documentId) => Event.fromMap(data, documentId));
 }
