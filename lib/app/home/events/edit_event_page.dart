@@ -78,7 +78,7 @@ class _EditEventPageState extends State<EditEventPage> {
           startTime: _startTime,
           endTime: _endTime,
           owner: _auth.currentUser!.uid,
-          attendees: 1,
+          attendees: [_auth.currentUser!.uid],
           description: _description,
         );
         await widget.database.setEvent(event);

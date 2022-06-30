@@ -1,7 +1,9 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:whereyouat/app/home/events/event_details_page.dart';
 import 'package:whereyouat/app/home/events/event_list_tile.dart';
 import 'package:whereyouat/app/home/events/list_items_builder.dart';
 import 'package:whereyouat/app/home/google_maps/location_auth.dart';
@@ -16,6 +18,7 @@ class GoogleMapsPage extends StatefulWidget {
 }
 
 class _GoogleMapsPageState extends State<GoogleMapsPage> {
+  late final Completer<GoogleMapController> _controller = Completer();
   final location = LocationAuth();
   Set<Marker> markers = {};
 
@@ -32,6 +35,7 @@ class _GoogleMapsPageState extends State<GoogleMapsPage> {
           infoWindow: InfoWindow(
             title: event.name,
             snippet: event.description,
+            onTap: () => EventDetailsPage.show(context, event: event),
           ),
           position: LatLng(event.location['lat'], event.location['long']),
           icon: BitmapDescriptor.defaultMarkerWithHue(
@@ -40,9 +44,18 @@ class _GoogleMapsPageState extends State<GoogleMapsPage> {
     }
   }
 
+  void _showInfoWindow(GoogleMapController controller, Event event) {
+    controller.showMarkerInfoWindow(MarkerId(event.id));
+    controller.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
+      target: LatLng(event.location['lat'], event.location['long']),
+      zoom: 15,
+    )));
+  }
+
   @override
   Widget build(BuildContext context) {
     final database = Provider.of<Database>(context, listen: false);
+    late GoogleMapController mapController;
 
     return Scaffold(
       appBar: AppBar(
@@ -82,7 +95,9 @@ class _GoogleMapsPageState extends State<GoogleMapsPage> {
                           snapshot.data!.values.last),
                       zoom: 14,
                     ),
-                    onMapCreated: (GoogleMapController controller) {},
+                    onMapCreated: (GoogleMapController controller) {
+                      mapController = controller;
+                    },
                     markers: Set<Marker>.of(markers),
                   );
                 } else {
@@ -111,9 +126,7 @@ class _GoogleMapsPageState extends State<GoogleMapsPage> {
                       itemBuilder: (context, event) {
                         return EventListTile(
                           event: event,
-                          onTap: () {
-                            print('REROUTE TO EVENT INFO PAGE');
-                          },
+                          onTap: () => _showInfoWindow(mapController, event),
                         );
                       });
                 }),

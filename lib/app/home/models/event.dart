@@ -18,7 +18,7 @@ class Event {
   final DateTime endTime;
   final Map<String, dynamic> location;
   final String owner;
-  final int attendees;
+  final List<dynamic> attendees;
   final String description;
 
   factory Event.fromMap(Map<String, dynamic> data, String documentId) {
@@ -29,7 +29,7 @@ class Event {
     final DateTime endTime = time.toDate();
     final Map<String, dynamic> location = data['location'];
     final String owner = data['owner'];
-    final int attendees = data['attendees'];
+    final List<dynamic> attendees = data['attendees'];
     final String description = data['description'];
     return Event(
       id: documentId,

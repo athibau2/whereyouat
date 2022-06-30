@@ -6,6 +6,7 @@ import 'package:whereyouat/services/firestore_service.dart';
 abstract class Database {
   Future<void> setEvent(Event event);
   Future<void> deleteEvent(Event event);
+  Future<void> optInOrOut(Event event);
   Stream<List<Event>> userEventsStream();
   Stream<List<Event>> eventsStream();
 }
@@ -34,6 +35,11 @@ class FirestoreDatabase implements Database {
   Future<void> deleteEvent(Event event) async {
     _service.deleteData(path: APIPath.userEvent(uid, event.id));
     _service.deleteData(path: APIPath.event(event.id));
+  }
+
+  @override
+  Future<void> optInOrOut(Event event) async {
+
   }
 
   @override
