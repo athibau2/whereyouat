@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class FirestoreService {
   FirestoreService._();
   static final instance = FirestoreService._();
+
   Future<void> setData({
     required String path,
     required Map<String, dynamic> data,
@@ -14,6 +15,12 @@ class FirestoreService {
   Future<void> deleteData({required String path}) async {
     final reference = FirebaseFirestore.instance.doc(path);
     await reference.delete();
+  }
+
+  Future<bool> isAttending({required String path}) async {
+    final reference = FirebaseFirestore.instance.doc(path);
+    final data = await reference.get();
+    return data.exists;
   }
 
   Stream<List<T>> collectionStream<T>({

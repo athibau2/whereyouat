@@ -7,6 +7,7 @@ abstract class Database {
   Future<void> setEvent(Event event);
   Future<void> deleteEvent(Event event);
   Future<void> optOut(Event event);
+  Future<bool> isAttending(String uid, String eventId);
   Stream<List<Event>> userEventsStream();
   Stream<List<Event>> eventsStream();
   Stream<Map<String, dynamic>> eventStream(String uid, String eventId);
@@ -48,6 +49,12 @@ class FirestoreDatabase implements Database {
   }
 
   @override
+  Future<bool> isAttending(String uid, String eventId) async {
+    final bool isAttending = await _service.isAttending(path: APIPath.userEvent(uid, eventId));
+    return isAttending;
+  }
+
+  @override
   Stream<List<Event>> userEventsStream() => _service.collectionStream(
       path: APIPath.userEvents(uid),
       builder: (data, documentId) => Event.fromMap(data, documentId));
@@ -58,7 +65,8 @@ class FirestoreDatabase implements Database {
       builder: (data, documentId) => Event.fromMap(data, documentId));
 
   @override
-  Stream<Map<String, dynamic>> eventStream(String uid, String eventId) => _service.documentStream(
-      path: APIPath.userEvent(uid, eventId),
-      builder: (data, documentId) => Event.fromMap(data, documentId));
+  Stream<Map<String, dynamic>> eventStream(String uid, String eventId) =>
+      _service.documentStream(
+          path: APIPath.userEvent(uid, eventId),
+          builder: (data, documentId) => Event.fromMap(data, documentId));
 }

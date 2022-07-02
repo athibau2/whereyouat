@@ -40,8 +40,6 @@ class EventDetailsPage extends StatefulWidget {
 
 class _EventDetailsPageState extends State<EventDetailsPage> {
   late Event _event;
-  late DocumentSnapshot<Object?> snapshot;
-  late Map<String, dynamic>? streamEvent;
   bool loading = false;
   late int people;
 
@@ -50,35 +48,14 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
     super.initState();
     _event = widget.event;
     people = widget.event.attendees.length;
-    _getStatus();
   }
 
-  Future<void> _getStatus() async {
-    // Stream<Map<String, dynamic>> stream =
-    //     widget.database.eventStream(widget.auth.currentUser!.uid, _event.id);
-    // stream.listen((event) {
-    //   if (event.isNotEmpty) {
-    //     setState(() {
-    //       streamEvent = event;
-    //     });
-    //     print('STREAMEVENT: ${streamEvent},,,,,${event}');
-    //   }
-    // });
-
-    CollectionReference events = FirebaseFirestore.instance
-        .collection('users/${widget.auth.currentUser!.uid}/events');
-    final res = await events.doc(_event.id).get();
-    setState(() {
-      snapshot = res;
-    });
-  }
-
-  Future<void> _optInOrOut(BuildContext context) async {
+  Future<void> _optInOrOut(BuildContext context, bool isAttending) async {
     setState(() {
       loading = true;
     });
     // OPT IN
-    if (!snapshot.exists) {
+    if (!isAttending) {
       setState(() {
         people += 1;
       });
@@ -97,7 +74,6 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
         setState(() {
           loading = false;
         });
-        _getStatus();
       } on FirebaseException catch (e) {
         showExceptionAlertDialog(
           context,
@@ -107,12 +83,11 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
       }
     }
     // OPT OUT
-    else if (snapshot.exists) {
+    else if (isAttending) {
       setState(() {
         people -= 1;
       });
-      Map<String, dynamic> event = snapshot.data() as Map<String, dynamic>;
-      List<dynamic> attendees = event['attendees'];
+      List<dynamic> attendees = _event.attendees;
       for (int i = 0; i < attendees.length; ++i) {
         if (attendees[i] == widget.auth.currentUser!.uid) {
           attendees.removeAt(i);
@@ -134,7 +109,6 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
         setState(() {
           loading = false;
         });
-        _getStatus();
       } on FirebaseException catch (e) {
         showExceptionAlertDialog(
           context,
@@ -147,39 +121,61 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).primaryColor,
-        elevation: 6,
-        title: const Text("Event Details"),
-        centerTitle: true,
-        actions: [
-          TextButton(
-            child: const Text(
-              'Done',
-              style: TextStyle(fontSize: 15, color: Colors.white),
-            ),
-            onPressed: () => Navigator.of(context).pop(),
-          )
-        ],
-      ),
-      body: _buildContent(context),
-      backgroundColor: Colors.grey[200],
-      floatingActionButton: CustomButton(
-        child: loading
-            ? const CircularProgressIndicator()
-            : Text(
-                snapshot.exists ? 'Opt Out' : 'Opt In!',
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 22,
-                ),
+    bool isAttending;
+
+    return FutureBuilder<bool>(
+        future: widget.database
+            .isAttending(widget.auth.currentUser!.uid, _event.id),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          } else if (snapshot.connectionState == ConnectionState.done) {
+            isAttending = snapshot.data!;
+            return Scaffold(
+              appBar: AppBar(
+                backgroundColor: Theme.of(context).primaryColor,
+                elevation: 6,
+                title: const Text("Event Details"),
+                centerTitle: true,
+                actions: [
+                  TextButton(
+                    child: const Text(
+                      'Done',
+                      style: TextStyle(fontSize: 15, color: Colors.white),
+                    ),
+                    onPressed: () => Navigator.of(context).pop(),
+                  )
+                ],
               ),
-        onPressed: () => _optInOrOut(context),
-        color: snapshot.exists ? Colors.red : Theme.of(context).primaryColor,
-        borderRadius: 30,
-      ),
-    );
+              body: _buildContent(context),
+              backgroundColor: Colors.grey[200],
+              floatingActionButton: CustomButton(
+                child: loading
+                    ? const CircularProgressIndicator()
+                    : Text(
+                        isAttending ? 'Opt Out' : 'Opt In!',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 22,
+                        ),
+                      ),
+                onPressed: () => _optInOrOut(context, isAttending),
+                color:
+                    isAttending ? Colors.red : Theme.of(context).primaryColor,
+                borderRadius: 30,
+              ),
+            );
+          } else {
+            return Center(
+              child: Text(
+                snapshot.data as String,
+                style: const TextStyle(fontSize: 20),
+              ),
+            );
+          }
+        });
   }
 
   Widget _buildContent(BuildContext context) {
