@@ -30,6 +30,8 @@ class ListItemsBuilder<T> extends StatelessWidget {
         return const EmptyContent();
       }
     } else if (snapshot.hasError) {
+      print('ERROR: ${snapshot.error}');
+      print('STACK: ${snapshot.stackTrace}');
       return const EmptyContent(
         title: 'Something went wrong',
         message: 'Unable to load items right now',
