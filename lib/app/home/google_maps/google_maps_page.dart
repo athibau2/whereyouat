@@ -129,9 +129,7 @@ class _GoogleMapsPageState extends State<GoogleMapsPage> {
                       itemBuilder: (context, event) {
                         return EventListTile(
                           event: event,
-                          onTap: () => _auth.currentUser!.uid == event.owner
-                              ? EditEventPage.show(context, event: event)
-                              : _showInfoWindow(mapController, event),
+                          onTap: () => _showInfoWindow(mapController, event),
                         );
                       });
                 }),

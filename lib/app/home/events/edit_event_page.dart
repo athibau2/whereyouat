@@ -38,6 +38,7 @@ class _EditEventPageState extends State<EditEventPage> {
   late Map<String, dynamic> _location;
   late DateTime _startTime;
   late DateTime _endTime;
+  late dynamic _attendees;
 
   @override
   void initState() {
@@ -48,12 +49,16 @@ class _EditEventPageState extends State<EditEventPage> {
       _startTime = widget.event!.startTime;
       _endTime = widget.event!.endTime;
       _description = widget.event!.description;
+      _attendees = widget.event!.attendees.length == 1
+          ? 'Just me :)'
+          : widget.event!.attendees.length;
     } else {
       _name = '';
       _location = {};
       _startTime = DateTime.now();
       _endTime = DateTime.now();
       _description = '';
+      _attendees = 'Just me :)';
     }
   }
 
@@ -245,6 +250,26 @@ class _EditEventPageState extends State<EditEventPage> {
               }),
         ],
       ),
+      const SizedBox(
+        height: 10,
+      ),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          const Text(
+            "Attendees:",
+            style: TextStyle(
+              fontWeight: FontWeight.w700,
+              fontSize: 16,
+              color: Colors.black54,
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(right: 7.0),
+            child: Text(_attendees.toString()),
+          ),
+        ],
+      ),
     ];
   }
 
@@ -258,7 +283,7 @@ class _EditEventPageState extends State<EditEventPage> {
     }
     if (minute == 0) minute = '00';
     if (minute < 10) minute = '0' + minute.toString();
-    
+
     String getWeekday(int weekday) {
       switch (weekday) {
         case 1:

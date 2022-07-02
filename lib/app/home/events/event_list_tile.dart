@@ -19,9 +19,10 @@ class EventListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final _auth = Provider.of<AuthBase>(context, listen: false);
+    final bool isMine = _auth.currentUser!.uid == event.owner;
 
     return ListTile(
-      tileColor: _auth.currentUser!.uid == event.owner
+      tileColor: isMine
           ? Colors.blueGrey[100]
           : Colors.grey[200],
       title: Text(event.name),

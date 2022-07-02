@@ -42,6 +42,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
   late Event _event;
   bool loading = false;
   late int people;
+  late bool isMine = widget.event.owner == widget.auth.currentUser!.uid;
 
   @override
   void initState() {
@@ -151,21 +152,24 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
               ),
               body: _buildContent(context),
               backgroundColor: Colors.grey[200],
-              floatingActionButton: CustomButton(
-                child: loading
-                    ? const CircularProgressIndicator()
-                    : Text(
-                        isAttending ? 'Opt Out' : 'Opt In!',
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 22,
-                        ),
-                      ),
-                onPressed: () => _optInOrOut(context, isAttending),
-                color:
-                    isAttending ? Colors.red : Theme.of(context).primaryColor,
-                borderRadius: 30,
-              ),
+              floatingActionButton: !isMine
+                  ? CustomButton(
+                      child: loading
+                          ? const CircularProgressIndicator()
+                          : Text(
+                              isAttending ? 'Opt Out' : 'Opt In!',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 22,
+                              ),
+                            ),
+                      onPressed: () => _optInOrOut(context, isAttending),
+                      color: isAttending
+                          ? Colors.red
+                          : Theme.of(context).primaryColor,
+                      borderRadius: 30,
+                    )
+                  : null,
             );
           } else {
             return Center(
