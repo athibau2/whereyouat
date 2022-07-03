@@ -58,6 +58,12 @@ class AccountPage extends StatelessWidget {
           child: _buildUserInfo(auth.currentUser),
         ),
       ),
+      body: Center(
+        child: Text(
+          auth.currentUser!.uid,
+          style: const TextStyle(color: Colors.black),
+        ),
+      ),
     );
   }
 
