@@ -53,12 +53,12 @@ class EventsPage extends StatelessWidget {
           itemBuilder: (context, event) => Dismissible(
             key: Key('event-${event.id}'),
             background: Container(color: Colors.red),
-            onDismissed: (direction) => _auth.currentUser!.uid == event.owner
+            onDismissed: (direction) => _auth.currentUser!.uid == event.owner['uid']
                 ? _delete(context, event)
                 : _optOut(context, event),
             child: EventListTile(
               event: event,
-              onTap: () => _auth.currentUser!.uid == event.owner
+              onTap: () => _auth.currentUser!.uid == event.owner['uid']
                   ? EditEventPage.show(context, event: event)
                   : EventDetailsPage.show(context, event: event),
             ),

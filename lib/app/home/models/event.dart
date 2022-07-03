@@ -17,7 +17,7 @@ class Event {
   final DateTime startTime;
   final DateTime endTime;
   final Map<String, dynamic> location;
-  final String owner;
+  final Map<String, dynamic> owner;
   final List<dynamic> attendees;
   final String description;
 
@@ -28,7 +28,7 @@ class Event {
     final DateTime startTime = date.toDate();
     final DateTime endTime = time.toDate();
     final Map<String, dynamic> location = data['location'];
-    final String owner = data['owner'];
+    final Map<String, dynamic> owner = data['owner'];
     final List<dynamic> attendees = data['attendees'];
     final String description = data['description'];
     return Event(

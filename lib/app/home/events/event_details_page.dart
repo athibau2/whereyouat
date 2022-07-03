@@ -43,7 +43,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
   late Event _event;
   bool loading = false;
   late int people;
-  late bool isMine = widget.event.owner == widget.auth.currentUser!.uid;
+  late bool isMine = widget.event.owner['uid'] == widget.auth.currentUser!.uid;
 
   @override
   void initState() {
@@ -282,6 +282,18 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
               child: Icon(Icons.people),
             ),
             Expanded(flex: 9, child: Text(people.toString())),
+          ],
+        ),
+        const Divider(
+          thickness: 1.0,
+        ),
+        Row(
+          children: [
+            const Padding(
+              padding: EdgeInsets.only(right: 8.0),
+              child: Icon(Icons.person),
+            ),
+            Expanded(flex: 9, child: Text(_event.owner['name'])),
           ],
         ),
         const Divider(

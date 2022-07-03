@@ -78,7 +78,10 @@ class _EditEventPageState extends State<EditEventPage> {
           location: _location,
           startTime: _startTime,
           endTime: _endTime,
-          owner: _auth.currentUser!.uid,
+          owner: {
+            'uid': _auth.currentUser!.uid,
+            'name': _auth.currentUser!.displayName ?? _auth.currentUser!.email,
+          },
           attendees: [_auth.currentUser!.uid],
           description: _description,
         );
