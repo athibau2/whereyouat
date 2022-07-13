@@ -5,6 +5,7 @@ import 'package:whereyouat/services/firestore_service.dart';
 
 abstract class Database {
   Future<void> setEvent(Event event);
+  Future<void> removeEventFromUsers(Event event, String uid);
   Future<void> deleteEvent(Event event);
   Future<void> optOut(Event event);
   Future<bool> isAttending(String uid, String eventId);
@@ -28,9 +29,18 @@ class FirestoreDatabase implements Database {
       data: event.toMap(),
     );
     _service.setData(
+      path: APIPath.userEvent(event.owner['uid'], event.id),
+      data: event.toMap(),
+    );
+    _service.setData(
       path: APIPath.event(event.id),
       data: event.toMap(),
     );
+  }
+
+  @override
+  Future<void> removeEventFromUsers(Event event, String uid) async {
+    _service.deleteData(path: APIPath.userEvent(uid, event.id));
   }
 
   @override
@@ -46,11 +56,16 @@ class FirestoreDatabase implements Database {
       path: APIPath.event(event.id),
       data: event.toMap(),
     );
+    _service.setData(
+      path: APIPath.userEvent(event.owner['uid'], event.id),
+      data: event.toMap(),
+    );
   }
 
   @override
   Future<bool> isAttending(String uid, String eventId) async {
-    final bool isAttending = await _service.isAttending(path: APIPath.userEvent(uid, eventId));
+    final bool isAttending =
+        await _service.isAttending(path: APIPath.userEvent(uid, eventId));
     return isAttending;
   }
 

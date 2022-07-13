@@ -53,9 +53,10 @@ class EventsPage extends StatelessWidget {
           itemBuilder: (context, event) => Dismissible(
             key: Key('event-${event.id}'),
             background: Container(color: Colors.red),
-            onDismissed: (direction) => _auth.currentUser!.uid == event.owner['uid']
-                ? _delete(context, event)
-                : _optOut(context, event),
+            onDismissed: (direction) =>
+                _auth.currentUser!.uid == event.owner['uid']
+                    ? _delete(context, event)
+                    : _optOut(context, event),
             child: EventListTile(
               event: event,
               onTap: () => _auth.currentUser!.uid == event.owner['uid']
@@ -69,8 +70,11 @@ class EventsPage extends StatelessWidget {
   }
 
   Future<void> _delete(BuildContext context, Event event) async {
+    final database = Provider.of<Database>(context, listen: false);
     try {
-      final database = Provider.of<Database>(context, listen: false);
+      for (int i = 0; i < event.attendees.length; ++i) {
+        await database.removeEventFromUsers(event, event.attendees[i]);
+      }
       await database.deleteEvent(event);
     } on FirebaseException catch (e) {
       showExceptionAlertDialog(
@@ -81,10 +85,28 @@ class EventsPage extends StatelessWidget {
     }
   }
 
-  Future<void> _optOut(BuildContext context, Event event) async {
+  Future<void> _optOut(BuildContext context, Event _event) async {
+    final _auth = Provider.of<AuthBase>(context, listen: false);
+    final database = Provider.of<Database>(context, listen: false);
+    List<dynamic> attendees = _event.attendees;
+    for (int i = 0; i < attendees.length; ++i) {
+      if (attendees[i] == _auth.currentUser!.uid) {
+        attendees.removeAt(i);
+        break;
+      }
+    }
     try {
-      final database = Provider.of<Database>(context, listen: false);
-      // await database.deleteEvent(event);
+      final event = Event(
+        id: _event.id,
+        name: _event.name,
+        location: _event.location,
+        startTime: _event.startTime,
+        endTime: _event.endTime,
+        owner: _event.owner,
+        attendees: [...attendees],
+        description: _event.description,
+      );
+      await database.optOut(event);
     } on FirebaseException catch (e) {
       showExceptionAlertDialog(
         context,
