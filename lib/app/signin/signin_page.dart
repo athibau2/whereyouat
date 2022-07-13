@@ -81,12 +81,12 @@ class SigninPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).primaryColor,
-        leading: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: SvgPicture.asset(
-            'images/logo.svg',
-          ),
-        ),
+        // leading: Padding(
+        //   padding: const EdgeInsets.all(8.0),
+        //   child: SvgPicture.asset(
+        //     'images/logo.svg',
+        //   ),
+        // ),
         title: const Text("Where You At"),
         elevation: 6,
         centerTitle: true,
@@ -100,15 +100,26 @@ class SigninPage extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          const SizedBox(
+            height: 75,
+          ),
           SizedBox(
-            child: _buildHeader(),
-            height: 50,
+            height: 150,
+            child: SvgPicture.asset(
+              'images/logo.svg',
+            ),
           ),
           const SizedBox(
-            height: 48,
+            height: 20,
+          ),
+          SizedBox(
+            child: _buildHeader(),
+          ),
+          const SizedBox(
+            height: 20,
           ),
           SocialSignInButton(
             asset: 'images/google-logo.png',
@@ -127,8 +138,16 @@ class SigninPage extends StatelessWidget {
             text: "Sign in with Facebook",
             onPressed: !isLoading ? () => signInWithFacebook(context) : null,
           ),
-          const SizedBox(
-            height: 8,
+          // const SizedBox(
+          //   height: 8,
+          // ),
+          const Padding(
+            padding: EdgeInsets.symmetric(vertical: 10),
+            child: Text(
+              "Or",
+              textAlign: TextAlign.center,
+              style: TextStyle(fontStyle: FontStyle.italic, fontSize: 16),
+            ),
           ),
           SignInButton(
             color: Colors.teal[700],
@@ -136,19 +155,19 @@ class SigninPage extends StatelessWidget {
             text: "Sign in with email",
             onPressed: !isLoading ? () => signInWithEmail(context) : null,
           ),
-          const Padding(
-            padding: EdgeInsets.symmetric(vertical: 10),
-            child: Text(
-              "Or",
-              textAlign: TextAlign.center,
-            ),
-          ),
-          SignInButton(
-            color: Colors.lime[500],
-            textColor: Colors.black87,
-            text: "Continue as guest",
-            onPressed: !isLoading ? () => signInAnonymously(context) : null,
-          ),
+          // const Padding(
+          //   padding: EdgeInsets.symmetric(vertical: 10),
+          //   child: Text(
+          //     "Or",
+          //     textAlign: TextAlign.center,
+          //   ),
+          // ),
+          // SignInButton(
+          //   color: Colors.lime[500],
+          //   textColor: Colors.black87,
+          //   text: "Continue as guest",
+          //   onPressed: !isLoading ? () => signInAnonymously(context) : null,
+          // ),
         ],
       ),
     );
@@ -159,10 +178,17 @@ class SigninPage extends StatelessWidget {
         ? const Center(
             child: CircularProgressIndicator(),
           )
-        : const Text(
-            "Sign in",
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 32, fontWeight: FontWeight.w600),
+        : const SizedBox(
+            height: 35,
           );
+    // : Text(
+    //     "Sign in",
+    //     textAlign: TextAlign.center,
+    //     style: TextStyle(
+    //         fontSize: 32,
+    //         fontWeight: FontWeight.w600,
+    //         color: Colors.grey.shade800,
+    //         fontStyle: FontStyle.italic),
+    //   );
   }
 }
