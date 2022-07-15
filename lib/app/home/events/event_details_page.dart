@@ -121,6 +121,12 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
     }
   }
 
+  final detailStyle = const TextStyle(
+    fontFamily: 'Serif',
+    fontSize: 16,
+    color: Colors.black87,
+  );
+
   @override
   Widget build(BuildContext context) {
     bool isAttending;
@@ -202,102 +208,132 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: [
-        Row(
-          children: [
-            const Padding(
-              padding: EdgeInsets.only(right: 8.0),
-              child: Icon(Icons.event),
-            ),
-            Expanded(
-              flex: 9,
-              child: Text(_event.name),
-            ),
-          ],
-        ),
-        const Divider(
-          thickness: 1.0,
-        ),
-        Row(
-          children: [
-            const Padding(
-              padding: EdgeInsets.only(right: 8.0),
-              child: Icon(Icons.text_snippet),
-            ),
-            Expanded(
-              flex: 9,
-              child: Text(
-                _event.description,
+        Padding(
+          padding: const EdgeInsets.only(bottom: 8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: const [
+                  Padding(
+                    padding: EdgeInsets.only(right: 10.0),
+                    child: Icon(Icons.event),
+                  ),
+                  Text('Title:'),
+                ],
               ),
-            ),
-          ],
-        ),
-        const Divider(
-          thickness: 1.0,
-        ),
-        Row(
-          children: [
-            const Padding(
-              padding: EdgeInsets.only(right: 8.0),
-              child: Icon(Icons.gps_fixed),
-            ),
-            Expanded(
-              flex: 9,
-              child: SelectableText(
-                _event.location['displayName'].toString(),
+              Center(
+                child: Text(
+                  _event.name,
+                  style: detailStyle,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
         const Divider(
           thickness: 1.0,
         ),
-        Row(
-          children: [
-            const Padding(
-              padding: EdgeInsets.only(right: 8.0),
-              child: FaIcon(FontAwesomeIcons.clock),
-            ),
-            Expanded(flex: 9, child: formatDateTime(_event.startTime)),
-          ],
+        Padding(
+          padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+          child: Row(
+            children: [
+              const Padding(
+                padding: EdgeInsets.only(right: 12.0),
+                child: Icon(Icons.text_snippet),
+              ),
+              Expanded(
+                flex: 9,
+                child: Text(
+                  _event.description,
+                  style: detailStyle,
+                ),
+              ),
+            ],
+          ),
         ),
         const Divider(
           thickness: 1.0,
         ),
-        Row(
-          children: [
-            const Padding(
-              padding: EdgeInsets.only(right: 8.0),
-              child: FaIcon(FontAwesomeIcons.clock),
-            ),
-            Expanded(flex: 9, child: formatDateTime(_event.endTime)),
-          ],
+        Padding(
+          padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+          child: Row(
+            children: [
+              const Padding(
+                padding: EdgeInsets.only(right: 12.0),
+                child: Icon(Icons.gps_fixed),
+              ),
+              Expanded(
+                flex: 9,
+                child: SelectableText(
+                  _event.location['displayName'].toString(),
+                  style: detailStyle,
+                ),
+              ),
+            ],
+          ),
         ),
         const Divider(
           thickness: 1.0,
         ),
-        Row(
-          children: [
-            const Padding(
-              padding: EdgeInsets.only(right: 8.0),
-              child: Icon(Icons.people),
-            ),
-            Expanded(flex: 9, child: Text(people.toString())),
-          ],
+        Padding(
+          padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+          child: Row(
+            children: [
+              const Padding(
+                padding: EdgeInsets.only(right: 12.0),
+                child: FaIcon(FontAwesomeIcons.clock),
+              ),
+              Column(
+                children: [
+                  formatDateTime(_event.startTime, style: detailStyle),
+                  formatDateTime(_event.endTime, style: detailStyle),
+                ],
+              ),
+              // const Spacer(),
+              // const Text('Until'),
+            ],
+          ),
         ),
         const Divider(
           thickness: 1.0,
         ),
-        Row(
-          children: [
-            const Padding(
-              padding: EdgeInsets.only(right: 8.0),
-              child: Icon(Icons.person),
-            ),
-            Expanded(flex: 9, child: Text(_event.owner['name'])),
-          ],
+        Padding(
+          padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+          child: Row(
+            children: [
+              const Padding(
+                padding: EdgeInsets.only(right: 12.0),
+                child: Icon(Icons.people),
+              ),
+              Expanded(
+                  flex: 9,
+                  child: Text(
+                    people.toString(),
+                    style: detailStyle,
+                  )),
+            ],
+          ),
         ),
         const Divider(
           thickness: 1.0,
+        ),
+        Padding(
+          padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+          child: Row(
+            children: [
+              const Padding(
+                padding: EdgeInsets.only(right: 12.0),
+                child: Icon(Icons.person),
+              ),
+              Expanded(
+                  flex: 9,
+                  child: Text(
+                    _event.owner['name'],
+                    style: detailStyle,
+                  )),
+            ],
+          ),
         ),
       ],
     );

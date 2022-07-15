@@ -104,16 +104,16 @@ class SigninPage extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           const SizedBox(
-            height: 75,
+            height: 80,
           ),
           SizedBox(
-            height: 150,
+            height: 175,
             child: SvgPicture.asset(
               'images/logo.svg',
             ),
           ),
           const SizedBox(
-            height: 20,
+            height: 25,
           ),
           SizedBox(
             child: _buildHeader(),
@@ -129,7 +129,7 @@ class SigninPage extends StatelessWidget {
             onPressed: !isLoading ? () => signInWithGoogle(context) : null,
           ),
           const SizedBox(
-            height: 8,
+            height: 12,
           ),
           SocialSignInButton(
             asset: 'images/facebook-logo.png',
@@ -138,17 +138,17 @@ class SigninPage extends StatelessWidget {
             text: "Sign in with Facebook",
             onPressed: !isLoading ? () => signInWithFacebook(context) : null,
           ),
-          // const SizedBox(
-          //   height: 8,
-          // ),
-          const Padding(
-            padding: EdgeInsets.symmetric(vertical: 10),
-            child: Text(
-              "Or",
-              textAlign: TextAlign.center,
-              style: TextStyle(fontStyle: FontStyle.italic, fontSize: 16),
-            ),
+          const SizedBox(
+            height: 12,
           ),
+          // const Padding(
+          //   padding: EdgeInsets.symmetric(vertical: 10),
+          //   child: Text(
+          //     "Or",
+          //     textAlign: TextAlign.center,
+          //     style: TextStyle(fontStyle: FontStyle.italic, fontSize: 16),
+          //   ),
+          // ),
           SignInButton(
             color: Colors.teal[700],
             textColor: Colors.white,

@@ -22,7 +22,13 @@ class EventListTile extends StatelessWidget {
 
     return ListTile(
       tileColor: isMine ? Colors.blueGrey[100] : Colors.grey[200],
-      title: Text(event.name),
+      title: Text(
+        event.name,
+        style: const TextStyle(
+          fontFamily: 'Georgia',
+          fontSize: 17,
+        ),
+      ),
       subtitle: formatDateTime(event.startTime),
       trailing: const Icon(Icons.chevron_right),
       onTap: onTap,

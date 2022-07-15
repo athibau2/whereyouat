@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-Widget formatDateTime(DateTime date) {
+Widget formatDateTime(DateTime date, {TextStyle? style}) {
     int hour = date.hour;
     dynamic minute = date.minute;
     String timeOfDay = 'AM';
@@ -43,5 +43,6 @@ Widget formatDateTime(DateTime date) {
         hour.toString() +
         ':' +
         minute.toString() +
-        ' $timeOfDay');
+        ' $timeOfDay',
+        style: style,);
   }
