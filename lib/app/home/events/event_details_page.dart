@@ -127,6 +127,11 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
     color: Colors.black87,
   );
 
+  final labelStyle = const TextStyle(
+    color: Colors.black54,
+    fontWeight: FontWeight.bold,
+  );
+
   @override
   Widget build(BuildContext context) {
     bool isAttending;
@@ -214,13 +219,19 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
-                children: const [
-                  Padding(
+                children: [
+                  const Padding(
                     padding: EdgeInsets.only(right: 10.0),
                     child: Icon(Icons.event),
                   ),
-                  Text('Title:'),
+                  Text(
+                    'Title:',
+                    style: labelStyle,
+                  ),
                 ],
+              ),
+              const SizedBox(
+                height: 5,
               ),
               Center(
                 child: Text(
@@ -236,14 +247,25 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
         ),
         Padding(
           padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
-          child: Row(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Padding(
-                padding: EdgeInsets.only(right: 12.0),
-                child: Icon(Icons.text_snippet),
+              Row(
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.only(right: 10.0),
+                    child: Icon(Icons.text_snippet),
+                  ),
+                  Text(
+                    'Description:',
+                    style: labelStyle,
+                  ),
+                ],
               ),
-              Expanded(
-                flex: 9,
+              const SizedBox(
+                height: 5,
+              ),
+              Center(
                 child: Text(
                   _event.description,
                   style: detailStyle,
@@ -257,14 +279,25 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
         ),
         Padding(
           padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
-          child: Row(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Padding(
-                padding: EdgeInsets.only(right: 12.0),
-                child: Icon(Icons.gps_fixed),
+              Row(
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.only(right: 10.0),
+                    child: Icon(Icons.gps_fixed),
+                  ),
+                  Text(
+                    'Location:',
+                    style: labelStyle,
+                  ),
+                ],
               ),
-              Expanded(
-                flex: 9,
+              const SizedBox(
+                height: 5,
+              ),
+              Center(
                 child: SelectableText(
                   _event.location['displayName'].toString(),
                   style: detailStyle,
@@ -278,20 +311,36 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
         ),
         Padding(
           padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
-          child: Row(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Padding(
-                padding: EdgeInsets.only(right: 12.0),
-                child: FaIcon(FontAwesomeIcons.clock),
-              ),
-              Column(
+              Row(
                 children: [
-                  formatDateTime(_event.startTime, style: detailStyle),
-                  formatDateTime(_event.endTime, style: detailStyle),
+                  const Padding(
+                    padding: EdgeInsets.only(right: 10.0),
+                    child: FaIcon(FontAwesomeIcons.clock),
+                  ),
+                  Text(
+                    'Time:',
+                    style: labelStyle,
+                  ),
                 ],
               ),
-              // const Spacer(),
-              // const Text('Until'),
+              const SizedBox(
+                height: 5,
+              ),
+              Center(
+                child: Column(
+                  children: [
+                    formatDateTime(_event.startTime, style: detailStyle),
+                    Text(
+                      ' -',
+                      style: detailStyle,
+                    ),
+                    formatDateTime(_event.endTime, style: detailStyle),
+                  ],
+                ),
+              ),
             ],
           ),
         ),
@@ -300,18 +349,30 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
         ),
         Padding(
           padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
-          child: Row(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Padding(
-                padding: EdgeInsets.only(right: 12.0),
-                child: Icon(Icons.people),
+              Row(
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.only(right: 10.0),
+                    child: Icon(Icons.people),
+                  ),
+                  Text(
+                    'Attending:',
+                    style: labelStyle,
+                  ),
+                ],
               ),
-              Expanded(
-                  flex: 9,
-                  child: Text(
-                    people.toString(),
-                    style: detailStyle,
-                  )),
+              const SizedBox(
+                height: 5,
+              ),
+              Center(
+                child: Text(
+                  people.toString(),
+                  style: detailStyle,
+                ),
+              ),
             ],
           ),
         ),
@@ -320,18 +381,30 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
         ),
         Padding(
           padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
-          child: Row(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Padding(
-                padding: EdgeInsets.only(right: 12.0),
-                child: Icon(Icons.person),
+              Row(
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.only(right: 10.0),
+                    child: Icon(Icons.person),
+                  ),
+                  Text(
+                    'Host:',
+                    style: labelStyle,
+                  ),
+                ],
               ),
-              Expanded(
-                  flex: 9,
-                  child: Text(
-                    _event.owner['name'],
-                    style: detailStyle,
-                  )),
+              const SizedBox(
+                height: 5,
+              ),
+              Center(
+                child: Text(
+                  _event.owner['name'],
+                  style: detailStyle,
+                ),
+              ),
             ],
           ),
         ),
