@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:whereyouat/app/home/account/account_page.dart';
 import 'package:whereyouat/app/home/cupertino_home_scaffold.dart';
 import 'package:whereyouat/app/home/google_maps/google_maps_page.dart';
 import 'package:whereyouat/app/home/tab_item.dart';
-import 'package:whereyouat/bloc/application_bloc.dart';
 import 'events/events_page.dart';
 
 class HomePage extends StatefulWidget {
@@ -25,7 +23,7 @@ class _HomePageState extends State<HomePage> {
 
   Map<TabItem, WidgetBuilder> get widgetBuilders {
     return {
-      TabItem.map: (_) => const GoogleMapsPage(),
+      TabItem.map: (_) => GoogleMapsPage(),
       TabItem.myEvents: (_) => EventsPage(),
       TabItem.account: (_) => const AccountPage(),
     };
@@ -51,6 +49,10 @@ class _HomePageState extends State<HomePage> {
     } else {
       setState(() {
         _currentTab = tabItem;
+        print('TAB: $tabItem');
+        if (tabItem == TabItem.map) {
+          setState(() {});
+        }
       });
     }
   }

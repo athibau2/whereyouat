@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
-import 'package:whereyouat/app/home/events/edit_event_page.dart';
 import 'package:whereyouat/app/home/events/event_details_page.dart';
 import 'package:whereyouat/app/home/events/event_list_tile.dart';
 import 'package:whereyouat/app/home/events/list_items_builder.dart';
@@ -120,6 +119,7 @@ class _GoogleMapsPageState extends State<GoogleMapsPage> {
                 builder: (context, snapshot) {
                   database.eventsStream().listen((events) {
                     if (snapshot.hasData) {
+                      markers.clear();
                       _createMarkers(context, events);
                     }
                   });

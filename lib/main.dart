@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:whereyouat/app/landing_page.dart';
 import 'package:whereyouat/bloc/application_bloc.dart';
 import 'package:whereyouat/services/auth.dart';
+import 'package:whereyouat/services/database.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,15 +23,16 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-        create: (context) => ApplicationBloc(),
-        child: Provider<AuthBase>(
-          create: (context) => Auth(),
-          child: MaterialApp(
-              title: 'Where You At',
-              theme: ThemeData(
-                primaryColor: Colors.green[700],
-              ),
-              home: LandingPage()),
-        ));
+      create: (context) => ApplicationBloc(),
+      child: Provider<AuthBase>(
+        create: (context) => Auth(),
+        child: MaterialApp(
+            title: 'Where You At',
+            theme: ThemeData(
+              primaryColor: Colors.green[700],
+            ),
+            home: LandingPage()),
+      ),
+    );
   }
 }

@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:whereyouat/services/auth.dart';
 import 'package:whereyouat/widgets/avatar.dart';
+import 'package:whereyouat/widgets/custom_button.dart';
 import 'package:whereyouat/widgets/show_alert_dialog.dart';
 
 class AccountPage extends StatelessWidget {
@@ -18,6 +19,15 @@ class AccountPage extends StatelessWidget {
     }
   }
 
+  Future<void> _deleteAccount(BuildContext context) async {
+    try {
+      final auth = Provider.of<AuthBase>(context, listen: false);
+      // await auth.signOut();
+    } catch (err) {
+      print(err.toString());
+    }
+  }
+
   Future<void> _confirmSignOut(BuildContext context) async {
     final didRequestSignOut = await showAlertDialog(context,
         title: 'Logout',
@@ -26,6 +36,16 @@ class AccountPage extends StatelessWidget {
         defaultActionText: 'Logout');
 
     if (didRequestSignOut == true) _signOut(context);
+  }
+
+  Future<void> _confirmDeleteAccount(BuildContext context) async {
+    final didRequestDeleteAccount = await showAlertDialog(context,
+        title: 'Delete Account',
+        content: 'Are you sure you want to delete your account?',
+        cancelActionText: 'Cancel',
+        defaultActionText: 'Delete');
+
+    if (didRequestDeleteAccount == true) _deleteAccount(context);
   }
 
   @override
@@ -59,9 +79,24 @@ class AccountPage extends StatelessWidget {
         ),
       ),
       body: Center(
-        child: Text(
-          auth.currentUser!.uid,
-          style: const TextStyle(color: Colors.black),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Text(
+              auth.currentUser!.toString(),
+              style: const TextStyle(color: Colors.black),
+            ),
+            CustomButton(
+              child: const Text(
+                'Delete Account',
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+              ),
+              color: Colors.redAccent,
+              onPressed: () => _confirmDeleteAccount(context),
+            ),
+          ],
         ),
       ),
     );

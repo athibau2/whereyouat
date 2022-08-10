@@ -177,7 +177,7 @@ class _EventDetailsPageState extends State<EventDetailsPage> {
                             ),
                       onPressed: () => _optInOrOut(context, isAttending),
                       color: isAttending
-                          ? Colors.red
+                          ? Colors.redAccent
                           : Theme.of(context).primaryColor,
                       borderRadius: 30,
                     )
