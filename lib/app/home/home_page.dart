@@ -49,7 +49,6 @@ class _HomePageState extends State<HomePage> {
     } else {
       setState(() {
         _currentTab = tabItem;
-        print('TAB: $tabItem');
         if (tabItem == TabItem.map) {
           setState(() {});
         }

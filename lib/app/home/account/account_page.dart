@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:whereyouat/services/auth.dart';
+import 'package:whereyouat/services/database.dart';
 import 'package:whereyouat/widgets/avatar.dart';
 import 'package:whereyouat/widgets/custom_button.dart';
 import 'package:whereyouat/widgets/show_alert_dialog.dart';
@@ -22,7 +23,8 @@ class AccountPage extends StatelessWidget {
   Future<void> _deleteAccount(BuildContext context) async {
     try {
       final auth = Provider.of<AuthBase>(context, listen: false);
-      // await auth.signOut();
+      final database = Provider.of<Database>(context, listen: false);
+      await database.deleteAccount(auth.currentUser!.uid);
     } catch (err) {
       print(err.toString());
     }

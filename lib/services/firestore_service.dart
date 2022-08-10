@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:whereyouat/app/home/models/event.dart';
 
 class FirestoreService {
   FirestoreService._();
@@ -21,6 +22,14 @@ class FirestoreService {
     final reference = FirebaseFirestore.instance.doc(path);
     final data = await reference.get();
     return data.exists;
+  }
+
+  Future<Future<QuerySnapshot<Map<String, dynamic>>>> userEvents<T>({
+    required String path,
+    required T Function(Map<String, dynamic> data, String documentId) builder,
+  }) async {
+    final reference = FirebaseFirestore.instance.collection(path).get();
+    return reference;
   }
 
   Stream<List<T>> collectionStream<T>({

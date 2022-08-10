@@ -12,6 +12,7 @@ abstract class Database {
   Stream<List<Event>> userEventsStream();
   Stream<List<Event>> eventsStream();
   Stream<Map<String, dynamic>> eventStream(String uid, String eventId);
+  Future<void> deleteAccount(String uid);
 }
 
 Future<String> getId() async =>
@@ -84,4 +85,20 @@ class FirestoreDatabase implements Database {
       _service.documentStream(
           path: APIPath.userEvent(uid, eventId),
           builder: (data, documentId) => Event.fromMap(data, documentId));
+
+  @override
+  Future<void> deleteAccount(String uid) async {
+    final events = userEventsStream();
+    events.forEach((element) async {
+      for (var event in element) {
+        print('EVENT: ${event.name}');
+        for (int i = 0; i < event.attendees.length; ++i) {
+          // TODO: add logic for opt out if event is not owners
+          await removeEventFromUsers(event, event.attendees[i]);
+          await deleteEvent(event);
+        }
+      }
+    });
+    _service.deleteData(path: APIPath.user(uid));
+  }
 }
